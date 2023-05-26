@@ -12,6 +12,7 @@
 		[
 			"add_executable",
 			"target_link_libraries",
+			"add_definitions",
 			"include_directories"
 		],
 		"files" : 
@@ -26,19 +27,25 @@
 			{
 				"command" : 0,
 				"file" : 0,
-				"line" : 35,
+				"line" : 47,
 				"parent" : 0
 			},
 			{
 				"command" : 1,
 				"file" : 0,
-				"line" : 37,
+				"line" : 51,
 				"parent" : 0
 			},
 			{
 				"command" : 2,
 				"file" : 0,
-				"line" : 30,
+				"line" : 24,
+				"parent" : 0
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 42,
 				"parent" : 0
 			}
 		]
@@ -52,10 +59,17 @@
 					"fragment" : "-g -fdiagnostics-color=always"
 				}
 			],
-			"includes" : 
+			"defines" : 
 			[
 				{
 					"backtrace" : 3,
+					"define" : "USE_CUDA"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 4,
 					"path" : "/usr/include/libpng16"
 				},
 				{

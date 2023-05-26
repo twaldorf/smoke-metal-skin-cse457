@@ -197,6 +197,9 @@ CMakeFiles/rtiow1.dir/main.cpp.o: /home/braiden/CSE457/smoke-metal-skin-cse457/m
   /usr/include/bits/xopen_lim.h \
   /usr/include/bits/uio_lim.h \
   /usr/include/setjmp.h \
+  /usr/include/c++/12.2.1/cstring \
+  /usr/include/string.h \
+  /usr/include/strings.h \
   /home/braiden/CSE457/smoke-metal-skin-cse457/src/hittable_list.hpp \
   /usr/include/c++/12.2.1/memory \
   /usr/include/c++/12.2.1/bits/stl_uninitialized.h \
@@ -263,7 +266,46 @@ CMakeFiles/rtiow1.dir/main.cpp.o: /home/braiden/CSE457/smoke-metal-skin-cse457/m
   /home/braiden/CSE457/smoke-metal-skin-cse457/src/png.hpp \
   /home/braiden/CSE457/smoke-metal-skin-cse457/src/utl.hpp \
   /home/braiden/CSE457/smoke-metal-skin-cse457/src/camera.hpp \
-  /home/braiden/CSE457/smoke-metal-skin-cse457/src/material.hpp
+  /home/braiden/CSE457/smoke-metal-skin-cse457/src/material.hpp \
+  /opt/cuda/include/curand_kernel.h \
+  /opt/cuda/include/nv/target \
+  /opt/cuda/include/nv/detail/__target_macros \
+  /opt/cuda/include/nv/detail/__preprocessor \
+  /usr/include/c++/12.2.1/math.h \
+  /opt/cuda/include/curand.h \
+  /opt/cuda/include/cuda_runtime.h \
+  /opt/cuda/include/crt/host_config.h \
+  /opt/cuda/include/builtin_types.h \
+  /opt/cuda/include/device_types.h \
+  /opt/cuda/include/crt/host_defines.h \
+  /opt/cuda/include/driver_types.h \
+  /opt/cuda/include/vector_types.h \
+  /opt/cuda/include/surface_types.h \
+  /opt/cuda/include/texture_types.h \
+  /opt/cuda/include/library_types.h \
+  /opt/cuda/include/channel_descriptor.h \
+  /opt/cuda/include/cuda_runtime_api.h \
+  /opt/cuda/include/cuda_device_runtime_api.h \
+  /opt/cuda/include/driver_functions.h \
+  /opt/cuda/include/vector_functions.h \
+  /opt/cuda/include/vector_functions.hpp \
+  /usr/include/c++/12.2.1/utility \
+  /usr/include/c++/12.2.1/bits/stl_relops.h \
+  /opt/cuda/include/curand_discrete.h \
+  /opt/cuda/include/curand_precalc.h \
+  /opt/cuda/include/curand_mrg32k3a.h \
+  /opt/cuda/include/curand_mtgp32_kernel.h \
+  /usr/include/c++/12.2.1/stdlib.h \
+  /usr/include/memory.h \
+  /opt/cuda/include/curand_mtgp32.h \
+  /opt/cuda/include/curand_philox4x32_x.h \
+  /opt/cuda/include/curand_globals.h \
+  /opt/cuda/include/curand_uniform.h \
+  /opt/cuda/include/curand_normal.h \
+  /opt/cuda/include/curand_normal_static.h \
+  /opt/cuda/include/curand_lognormal.h \
+  /opt/cuda/include/curand_poisson.h \
+  /opt/cuda/include/curand_discrete2.h
 
 CMakeFiles/rtiow1.dir/src/camera.cpp.o: /home/braiden/CSE457/smoke-metal-skin-cse457/src/camera.cpp \
   /usr/include/stdc-predef.h \
@@ -2386,8 +2428,6 @@ CMakeFiles/rtiow1.dir/src/vec3.cpp.o: /home/braiden/CSE457/smoke-metal-skin-cse4
   /usr/include/c++/12.2.1/pstl/glue_numeric_defs.h
 
 
-/home/braiden/CSE457/smoke-metal-skin-cse457/src/sphere.cpp:
-
 /home/braiden/CSE457/smoke-metal-skin-cse457/src/material.cpp:
 
 /home/braiden/CSE457/smoke-metal-skin-cse457/src/vec3.cpp:
@@ -2395,6 +2435,50 @@ CMakeFiles/rtiow1.dir/src/vec3.cpp.o: /home/braiden/CSE457/smoke-metal-skin-cse4
 /home/braiden/CSE457/smoke-metal-skin-cse457/src/colour.hpp:
 
 /home/braiden/CSE457/smoke-metal-skin-cse457/src/colour.cpp:
+
+/home/braiden/CSE457/smoke-metal-skin-cse457/src/sphere.cpp:
+
+/opt/cuda/include/curand_discrete2.h:
+
+/opt/cuda/include/curand_poisson.h:
+
+/opt/cuda/include/curand_normal_static.h:
+
+/opt/cuda/include/curand_normal.h:
+
+/opt/cuda/include/curand_philox4x32_x.h:
+
+/usr/include/memory.h:
+
+/opt/cuda/include/curand_mrg32k3a.h:
+
+/opt/cuda/include/curand_precalc.h:
+
+/opt/cuda/include/vector_functions.h:
+
+/opt/cuda/include/cuda_runtime_api.h:
+
+/opt/cuda/include/channel_descriptor.h:
+
+/opt/cuda/include/library_types.h:
+
+/opt/cuda/include/surface_types.h:
+
+/opt/cuda/include/vector_types.h:
+
+/opt/cuda/include/crt/host_defines.h:
+
+/opt/cuda/include/builtin_types.h:
+
+/opt/cuda/include/cuda_runtime.h:
+
+/opt/cuda/include/curand.h:
+
+/usr/include/c++/12.2.1/math.h:
+
+/opt/cuda/include/nv/detail/__preprocessor:
+
+/opt/cuda/include/nv/target:
 
 /home/braiden/CSE457/smoke-metal-skin-cse457/src/camera.hpp:
 
@@ -2411,6 +2495,8 @@ CMakeFiles/rtiow1.dir/src/vec3.cpp.o: /home/braiden/CSE457/smoke-metal-skin-cse4
 /usr/include/c++/12.2.1/x86_64-pc-linux-gnu/bits/opt_random.h:
 
 /usr/include/c++/12.2.1/random:
+
+/opt/cuda/include/driver_types.h:
 
 /usr/include/c++/12.2.1/tr1/poly_hermite.tcc:
 
@@ -2434,6 +2520,8 @@ CMakeFiles/rtiow1.dir/src/vec3.cpp.o: /home/braiden/CSE457/smoke-metal-skin-cse4
 
 /usr/include/bits/fp-fast.h:
 
+/opt/cuda/include/driver_functions.h:
+
 /usr/include/bits/flt-eval-method.h:
 
 /usr/include/math.h:
@@ -2450,9 +2538,13 @@ CMakeFiles/rtiow1.dir/src/vec3.cpp.o: /home/braiden/CSE457/smoke-metal-skin-cse4
 
 /usr/include/c++/12.2.1/pstl/execution_defs.h:
 
+/usr/include/c++/12.2.1/utility:
+
 /usr/include/c++/12.2.1/limits:
 
 /usr/include/c++/12.2.1/backward/auto_ptr.h:
+
+/opt/cuda/include/curand_lognormal.h:
 
 /usr/include/c++/12.2.1/bits/atomic_lockfree_defines.h:
 
@@ -2481,6 +2573,8 @@ CMakeFiles/rtiow1.dir/src/vec3.cpp.o: /home/braiden/CSE457/smoke-metal-skin-cse4
 /usr/include/c++/12.2.1/memory:
 
 /usr/include/setjmp.h:
+
+/opt/cuda/include/curand_uniform.h:
 
 /usr/include/bits/xopen_lim.h:
 
@@ -2520,9 +2614,13 @@ CMakeFiles/rtiow1.dir/src/vec3.cpp.o: /home/braiden/CSE457/smoke-metal-skin-cse4
 
 /usr/include/c++/12.2.1/x86_64-pc-linux-gnu/bits/error_constants.h:
 
+/opt/cuda/include/cuda_device_runtime_api.h:
+
 /usr/include/time.h:
 
 /usr/include/bits/types/struct_timespec.h:
+
+/opt/cuda/include/nv/detail/__target_macros:
 
 /usr/include/sched.h:
 
@@ -2534,11 +2632,15 @@ CMakeFiles/rtiow1.dir/src/vec3.cpp.o: /home/braiden/CSE457/smoke-metal-skin-cse4
 
 /usr/include/c++/12.2.1/bits/std_abs.h:
 
+/opt/cuda/include/vector_functions.hpp:
+
 /usr/include/bits/types/struct_itimerspec.h:
 
 /usr/include/ctype.h:
 
 /usr/include/locale.h:
+
+/opt/cuda/include/curand_discrete.h:
 
 /usr/include/c++/12.2.1/bits/allocator.h:
 
@@ -2632,6 +2734,8 @@ CMakeFiles/rtiow1.dir/src/vec3.cpp.o: /home/braiden/CSE457/smoke-metal-skin-cse4
 
 /usr/include/c++/12.2.1/bits/cxxabi_init_exception.h:
 
+/opt/cuda/include/texture_types.h:
+
 /usr/include/c++/12.2.1/new:
 
 /usr/include/c++/12.2.1/bits/postypes.h:
@@ -2651,6 +2755,8 @@ CMakeFiles/rtiow1.dir/src/vec3.cpp.o: /home/braiden/CSE457/smoke-metal-skin-cse4
 /usr/include/c++/12.2.1/bits/ios_base.h:
 
 /usr/include/bits/sched.h:
+
+/opt/cuda/include/device_types.h:
 
 /usr/include/c++/12.2.1/bits/unique_ptr.h:
 
@@ -2740,6 +2846,8 @@ CMakeFiles/rtiow1.dir/src/vec3.cpp.o: /home/braiden/CSE457/smoke-metal-skin-cse4
 
 /usr/include/bits/types/__locale_t.h:
 
+/usr/include/c++/12.2.1/stdlib.h:
+
 /usr/include/c++/12.2.1/ext/type_traits.h:
 
 /usr/include/c++/12.2.1/bits/stringfwd.h:
@@ -2753,6 +2861,8 @@ CMakeFiles/rtiow1.dir/src/vec3.cpp.o: /home/braiden/CSE457/smoke-metal-skin-cse4
 /usr/include/c++/12.2.1/x86_64-pc-linux-gnu/bits/c++locale.h:
 
 /usr/include/bits/types/mbstate_t.h:
+
+/opt/cuda/include/crt/host_config.h:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/12.2.1/include/stddef.h:
 
@@ -2787,6 +2897,8 @@ CMakeFiles/rtiow1.dir/src/vec3.cpp.o: /home/braiden/CSE457/smoke-metal-skin-cse4
 /usr/include/c++/12.2.1/ext/alloc_traits.h:
 
 /usr/include/bits/types/timer_t.h:
+
+/opt/cuda/include/curand_mtgp32_kernel.h:
 
 /usr/include/sys/select.h:
 
@@ -2828,6 +2940,8 @@ CMakeFiles/rtiow1.dir/src/vec3.cpp.o: /home/braiden/CSE457/smoke-metal-skin-cse4
 
 /usr/include/bits/types/struct___jmp_buf_tag.h:
 
+/opt/cuda/include/curand_kernel.h:
+
 /usr/include/c++/12.2.1/bits/random.h:
 
 /usr/include/c++/12.2.1/string_view:
@@ -2844,6 +2958,10 @@ CMakeFiles/rtiow1.dir/src/vec3.cpp.o: /home/braiden/CSE457/smoke-metal-skin-cse4
 
 /usr/include/c++/12.2.1/bits/new_allocator.h:
 
+/opt/cuda/include/curand_globals.h:
+
+/opt/cuda/include/curand_mtgp32.h:
+
 /usr/include/c++/12.2.1/bits/functexcept.h:
 
 /usr/include/wchar.h:
@@ -2857,6 +2975,8 @@ CMakeFiles/rtiow1.dir/src/vec3.cpp.o: /home/braiden/CSE457/smoke-metal-skin-cse4
 /usr/include/c++/12.2.1/bits/ptr_traits.h:
 
 /usr/include/c++/12.2.1/ext/numeric_traits.h:
+
+/usr/include/c++/12.2.1/bits/stl_relops.h:
 
 /home/braiden/CSE457/smoke-metal-skin-cse457/src/hittable.hpp:
 

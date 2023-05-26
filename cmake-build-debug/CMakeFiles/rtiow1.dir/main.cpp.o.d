@@ -139,53 +139,8 @@ CMakeFiles/rtiow1.dir/main.cpp.o: \
  /usr/include/bits/local_lim.h /usr/include/linux/limits.h \
  /usr/include/bits/posix2_lim.h /usr/include/bits/xopen_lim.h \
  /usr/include/bits/uio_lim.h /usr/include/setjmp.h \
- /opt/cuda/include/curand_kernel.h /opt/cuda/include/nv/target \
- /opt/cuda/include/nv/detail/__target_macros \
- /opt/cuda/include/nv/detail/__preprocessor \
- /usr/include/c++/12.2.1/math.h /usr/include/c++/12.2.1/cmath \
- /usr/include/math.h /usr/include/bits/math-vector.h \
- /usr/include/bits/libm-simd-decl-stubs.h \
- /usr/include/bits/flt-eval-method.h /usr/include/bits/fp-logb.h \
- /usr/include/bits/fp-fast.h \
- /usr/include/bits/mathcalls-helper-functions.h \
- /usr/include/bits/mathcalls.h /usr/include/bits/mathcalls-narrow.h \
- /usr/include/bits/iscanonical.h /usr/include/c++/12.2.1/bits/specfun.h \
- /usr/include/c++/12.2.1/limits /usr/include/c++/12.2.1/tr1/gamma.tcc \
- /usr/include/c++/12.2.1/tr1/special_function_util.h \
- /usr/include/c++/12.2.1/tr1/bessel_function.tcc \
- /usr/include/c++/12.2.1/tr1/beta_function.tcc \
- /usr/include/c++/12.2.1/tr1/ell_integral.tcc \
- /usr/include/c++/12.2.1/tr1/exp_integral.tcc \
- /usr/include/c++/12.2.1/tr1/hypergeometric.tcc \
- /usr/include/c++/12.2.1/tr1/legendre_function.tcc \
- /usr/include/c++/12.2.1/tr1/modified_bessel_func.tcc \
- /usr/include/c++/12.2.1/tr1/poly_hermite.tcc \
- /usr/include/c++/12.2.1/tr1/poly_laguerre.tcc \
- /usr/include/c++/12.2.1/tr1/riemann_zeta.tcc /opt/cuda/include/curand.h \
- /opt/cuda/include/cuda_runtime.h /opt/cuda/include/crt/host_config.h \
- /opt/cuda/include/builtin_types.h /opt/cuda/include/device_types.h \
- /opt/cuda/include/crt/host_defines.h /opt/cuda/include/driver_types.h \
- /opt/cuda/include/vector_types.h /opt/cuda/include/surface_types.h \
- /opt/cuda/include/texture_types.h /opt/cuda/include/library_types.h \
- /opt/cuda/include/channel_descriptor.h \
- /opt/cuda/include/cuda_runtime_api.h \
- /opt/cuda/include/cuda_device_runtime_api.h \
- /opt/cuda/include/driver_functions.h \
- /opt/cuda/include/vector_functions.h \
- /opt/cuda/include/vector_functions.hpp /usr/include/c++/12.2.1/utility \
- /usr/include/c++/12.2.1/bits/stl_relops.h \
- /opt/cuda/include/curand_discrete.h /opt/cuda/include/curand_precalc.h \
- /opt/cuda/include/curand_mrg32k3a.h \
- /opt/cuda/include/curand_mtgp32_kernel.h \
- /usr/include/c++/12.2.1/stdlib.h /usr/include/memory.h \
- /usr/include/string.h /usr/include/strings.h \
- /opt/cuda/include/curand_mtgp32.h \
- /opt/cuda/include/curand_philox4x32_x.h \
- /opt/cuda/include/curand_globals.h /opt/cuda/include/curand_uniform.h \
- /opt/cuda/include/curand_normal.h \
- /opt/cuda/include/curand_normal_static.h \
- /opt/cuda/include/curand_lognormal.h /opt/cuda/include/curand_poisson.h \
- /opt/cuda/include/curand_discrete2.h \
+ /usr/include/c++/12.2.1/cstring /usr/include/string.h \
+ /usr/include/strings.h \
  /home/braiden/CSE457/smoke-metal-skin-cse457/src/hittable_list.hpp \
  /usr/include/c++/12.2.1/memory \
  /usr/include/c++/12.2.1/bits/stl_uninitialized.h \
@@ -210,6 +165,25 @@ CMakeFiles/rtiow1.dir/main.cpp.o: \
  /usr/include/c++/12.2.1/bits/vector.tcc \
  /home/braiden/CSE457/smoke-metal-skin-cse457/src/hittable.hpp \
  /home/braiden/CSE457/smoke-metal-skin-cse457/src/utl.hpp \
+ /usr/include/c++/12.2.1/cmath /usr/include/math.h \
+ /usr/include/bits/math-vector.h /usr/include/bits/libm-simd-decl-stubs.h \
+ /usr/include/bits/flt-eval-method.h /usr/include/bits/fp-logb.h \
+ /usr/include/bits/fp-fast.h \
+ /usr/include/bits/mathcalls-helper-functions.h \
+ /usr/include/bits/mathcalls.h /usr/include/bits/mathcalls-narrow.h \
+ /usr/include/bits/iscanonical.h /usr/include/c++/12.2.1/bits/specfun.h \
+ /usr/include/c++/12.2.1/limits /usr/include/c++/12.2.1/tr1/gamma.tcc \
+ /usr/include/c++/12.2.1/tr1/special_function_util.h \
+ /usr/include/c++/12.2.1/tr1/bessel_function.tcc \
+ /usr/include/c++/12.2.1/tr1/beta_function.tcc \
+ /usr/include/c++/12.2.1/tr1/ell_integral.tcc \
+ /usr/include/c++/12.2.1/tr1/exp_integral.tcc \
+ /usr/include/c++/12.2.1/tr1/hypergeometric.tcc \
+ /usr/include/c++/12.2.1/tr1/legendre_function.tcc \
+ /usr/include/c++/12.2.1/tr1/modified_bessel_func.tcc \
+ /usr/include/c++/12.2.1/tr1/poly_hermite.tcc \
+ /usr/include/c++/12.2.1/tr1/poly_laguerre.tcc \
+ /usr/include/c++/12.2.1/tr1/riemann_zeta.tcc \
  /usr/include/c++/12.2.1/random /usr/include/c++/12.2.1/bits/random.h \
  /usr/include/c++/12.2.1/bits/uniform_int_dist.h \
  /usr/include/c++/12.2.1/x86_64-pc-linux-gnu/bits/opt_random.h \
@@ -222,4 +196,31 @@ CMakeFiles/rtiow1.dir/main.cpp.o: \
  /home/braiden/CSE457/smoke-metal-skin-cse457/src/png.hpp \
  /home/braiden/CSE457/smoke-metal-skin-cse457/src/utl.hpp \
  /home/braiden/CSE457/smoke-metal-skin-cse457/src/camera.hpp \
- /home/braiden/CSE457/smoke-metal-skin-cse457/src/material.hpp
+ /home/braiden/CSE457/smoke-metal-skin-cse457/src/material.hpp \
+ /opt/cuda/include/curand_kernel.h /opt/cuda/include/nv/target \
+ /opt/cuda/include/nv/detail/__target_macros \
+ /opt/cuda/include/nv/detail/__preprocessor \
+ /usr/include/c++/12.2.1/math.h /opt/cuda/include/curand.h \
+ /opt/cuda/include/cuda_runtime.h /opt/cuda/include/crt/host_config.h \
+ /opt/cuda/include/builtin_types.h /opt/cuda/include/device_types.h \
+ /opt/cuda/include/crt/host_defines.h /opt/cuda/include/driver_types.h \
+ /opt/cuda/include/vector_types.h /opt/cuda/include/surface_types.h \
+ /opt/cuda/include/texture_types.h /opt/cuda/include/library_types.h \
+ /opt/cuda/include/channel_descriptor.h \
+ /opt/cuda/include/cuda_runtime_api.h \
+ /opt/cuda/include/cuda_device_runtime_api.h \
+ /opt/cuda/include/driver_functions.h \
+ /opt/cuda/include/vector_functions.h \
+ /opt/cuda/include/vector_functions.hpp /usr/include/c++/12.2.1/utility \
+ /usr/include/c++/12.2.1/bits/stl_relops.h \
+ /opt/cuda/include/curand_discrete.h /opt/cuda/include/curand_precalc.h \
+ /opt/cuda/include/curand_mrg32k3a.h \
+ /opt/cuda/include/curand_mtgp32_kernel.h \
+ /usr/include/c++/12.2.1/stdlib.h /usr/include/memory.h \
+ /opt/cuda/include/curand_mtgp32.h \
+ /opt/cuda/include/curand_philox4x32_x.h \
+ /opt/cuda/include/curand_globals.h /opt/cuda/include/curand_uniform.h \
+ /opt/cuda/include/curand_normal.h \
+ /opt/cuda/include/curand_normal_static.h \
+ /opt/cuda/include/curand_lognormal.h /opt/cuda/include/curand_poisson.h \
+ /opt/cuda/include/curand_discrete2.h

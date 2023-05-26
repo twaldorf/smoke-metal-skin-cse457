@@ -24,6 +24,7 @@
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
+					<Add option="-DUSE_CUDA"/>
 					<Add directory="/usr/include/libpng16"/>
 					<Add directory="/opt/cuda/include"/>
 					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/12.2.1/../../../../include/c++/12.2.1"/>
@@ -48,6 +49,7 @@
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
+					<Add option="-DUSE_CUDA"/>
 					<Add directory="/usr/include/libpng16"/>
 					<Add directory="/opt/cuda/include"/>
 					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/12.2.1/../../../../include/c++/12.2.1"/>

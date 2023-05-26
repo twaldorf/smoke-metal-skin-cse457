@@ -1,6 +1,6 @@
 #include <iostream>
 #include <png.h>
-#include <curand_kernel.h>
+#include <cstring>
 
 #include "src/hittable_list.hpp"
 #include "src/sphere.hpp"
@@ -10,6 +10,8 @@
 #include "src/material.hpp"
 
 // limited version of checkCudaErrors from helper_cuda.h in CUDA examples
+#ifdef USE_CUDA
+#include <curand_kernel.h>
 #define checkCudaErrors(val) check_cuda( (val), #val, __FILE__, __LINE__ )
 
 void check_cuda(cudaError_t result, char const *const func, const char *const file, int const line) {
@@ -21,6 +23,7 @@ void check_cuda(cudaError_t result, char const *const func, const char *const fi
 		exit(99);
 	}
 }
+#endif
 
 colour ray_colour(const ray& r, const hittable& world, int max_depth);
 
@@ -72,8 +75,21 @@ hittable_list random_scene() {
 	return world;
 }
 
-int main()
+int main(int argc, char **argv)
 {
+	#ifdef USE_CUDA
+
+	cudaDeviceProp prop{};
+	cudaGetDeviceProperties(&prop, 0);
+	if(argc >= 2)
+	{
+		if(strcmp(argv[1], "--gpu") == 0)
+		{
+			std::cout << "Running on " << prop.name << std::endl;
+		}
+	}
+	#endif
+
 	//image
 	const auto aspect_ratio = 16.0/9.0;
 	const int image_width = 400; //1920 or 400

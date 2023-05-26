@@ -1210,6 +1210,18 @@
 			"value" : "/usr/lib/librt.a"
 		},
 		{
+			"name" : "CUDA_COMPILE",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "CUDA Support"
+				}
+			],
+			"type" : "BOOL",
+			"value" : "ON"
+		},
+		{
 			"name" : "CUDA_CUDART",
 			"properties" : 
 			[
@@ -2184,18 +2196,6 @@
 			],
 			"type" : "FILEPATH",
 			"value" : "/opt/cuda/lib/libnvrtc.so"
-		},
-		{
-			"name" : "FIND_PACKAGE_MESSAGE_DETAILS_CUDAToolkit",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : "Details about finding CUDAToolkit"
-				}
-			],
-			"type" : "INTERNAL",
-			"value" : "[/opt/cuda/include][/opt/cuda/lib/libcudart.so][/opt/cuda/bin][v12.1.66()]"
 		},
 		{
 			"name" : "FIND_PACKAGE_MESSAGE_DETAILS_PkgConfig",

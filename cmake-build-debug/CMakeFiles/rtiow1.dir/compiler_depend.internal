@@ -198,6 +198,9 @@ CMakeFiles/rtiow1.dir/main.cpp.o
  /usr/include/bits/xopen_lim.h
  /usr/include/bits/uio_lim.h
  /usr/include/setjmp.h
+ /usr/include/c++/12.2.1/cstring
+ /usr/include/string.h
+ /usr/include/strings.h
  /home/braiden/CSE457/smoke-metal-skin-cse457/src/hittable_list.hpp
  /usr/include/c++/12.2.1/memory
  /usr/include/c++/12.2.1/bits/stl_uninitialized.h
@@ -265,6 +268,45 @@ CMakeFiles/rtiow1.dir/main.cpp.o
  /home/braiden/CSE457/smoke-metal-skin-cse457/src/utl.hpp
  /home/braiden/CSE457/smoke-metal-skin-cse457/src/camera.hpp
  /home/braiden/CSE457/smoke-metal-skin-cse457/src/material.hpp
+ /opt/cuda/include/curand_kernel.h
+ /opt/cuda/include/nv/target
+ /opt/cuda/include/nv/detail/__target_macros
+ /opt/cuda/include/nv/detail/__preprocessor
+ /usr/include/c++/12.2.1/math.h
+ /opt/cuda/include/curand.h
+ /opt/cuda/include/cuda_runtime.h
+ /opt/cuda/include/crt/host_config.h
+ /opt/cuda/include/builtin_types.h
+ /opt/cuda/include/device_types.h
+ /opt/cuda/include/crt/host_defines.h
+ /opt/cuda/include/driver_types.h
+ /opt/cuda/include/vector_types.h
+ /opt/cuda/include/surface_types.h
+ /opt/cuda/include/texture_types.h
+ /opt/cuda/include/library_types.h
+ /opt/cuda/include/channel_descriptor.h
+ /opt/cuda/include/cuda_runtime_api.h
+ /opt/cuda/include/cuda_device_runtime_api.h
+ /opt/cuda/include/driver_functions.h
+ /opt/cuda/include/vector_functions.h
+ /opt/cuda/include/vector_functions.hpp
+ /usr/include/c++/12.2.1/utility
+ /usr/include/c++/12.2.1/bits/stl_relops.h
+ /opt/cuda/include/curand_discrete.h
+ /opt/cuda/include/curand_precalc.h
+ /opt/cuda/include/curand_mrg32k3a.h
+ /opt/cuda/include/curand_mtgp32_kernel.h
+ /usr/include/c++/12.2.1/stdlib.h
+ /usr/include/memory.h
+ /opt/cuda/include/curand_mtgp32.h
+ /opt/cuda/include/curand_philox4x32_x.h
+ /opt/cuda/include/curand_globals.h
+ /opt/cuda/include/curand_uniform.h
+ /opt/cuda/include/curand_normal.h
+ /opt/cuda/include/curand_normal_static.h
+ /opt/cuda/include/curand_lognormal.h
+ /opt/cuda/include/curand_poisson.h
+ /opt/cuda/include/curand_discrete2.h
 
 CMakeFiles/rtiow1.dir/src/camera.cpp.o
  /home/braiden/CSE457/smoke-metal-skin-cse457/src/camera.cpp
