@@ -1,4 +1,4 @@
-# Install script for directory: /home/braiden/CLionProjects/rtiow1
+# Install script for directory: /home/braiden/CSE457/smoke-metal-skin-cse457
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/braiden/CLionProjects/rtiow1/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/braiden/CSE457/smoke-metal-skin-cse457/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

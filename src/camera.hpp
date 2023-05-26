@@ -1,7 +1,6 @@
 #ifndef RTIOW1_SRC_CAMERA_HPP_
 #define RTIOW1_SRC_CAMERA_HPP_
 
-//#include <curand_kernel.h>
 #include "ray.hpp"
 #include "utl.hpp"
 

@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.21)
 project(rtiow1 LANGUAGES CXX CUDA)
 
-#set(CMAKE_CUDA_STANDARD 17)
+set(CMAKE_CUDA_STANDARD 17)
 set(EXE rtiow1)
-#set(CUDA_PATH /opt/cuda/bin)
+set(CUDA_PATH /opt/cuda/bin)
 
 # search for pkg-config
 include (FindPkgConfig)
@@ -11,7 +11,7 @@ if (NOT PKG_CONFIG_FOUND)
     message (FATAL_ERROR "pkg-config not found")
 endif ()
 
-#find_package(CUDAToolkit REQUIRED)
+find_package(CUDAToolkit REQUIRED)
 
 set(SOURCE
         main.cpp src/vec3.cpp src/colour.cpp
@@ -33,6 +33,6 @@ else ()
 endif ()
 
 add_executable(${EXE} ${SOURCE})
-#message(${CUDAToolkit_LIBRARY_DIR})
-#target_link_libraries(${EXE} ${LIBPNG_LINK_FLAGS} PRIVATE CUDA::cudart CUDA::cuda_driver)
-target_link_libraries(${EXE} ${LIBPNG_LINK_FLAGS})
+message(${CUDAToolkit_LIBRARY_DIR})
+target_link_libraries(${EXE} ${LIBPNG_LINK_FLAGS} PRIVATE CUDA::cudart CUDA::cuda_driver)
+#target_link_libraries(${EXE} ${LIBPNG_LINK_FLAGS})

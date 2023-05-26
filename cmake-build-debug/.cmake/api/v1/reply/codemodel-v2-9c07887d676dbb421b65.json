@@ -39,7 +39,7 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "rtiow1::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-rtiow1-Debug-8d07b5704a7632661402.json",
+					"jsonFile" : "target-rtiow1-Debug-055bd885ea8f285026ed.json",
 					"name" : "rtiow1",
 					"projectIndex" : 0
 				}
@@ -49,8 +49,8 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "/home/braiden/CLionProjects/rtiow1/cmake-build-debug",
-		"source" : "/home/braiden/CLionProjects/rtiow1"
+		"build" : "/home/braiden/CSE457/smoke-metal-skin-cse457/cmake-build-debug",
+		"source" : "/home/braiden/CSE457/smoke-metal-skin-cse457"
 	},
 	"version" : 
 	{

@@ -1,5 +1,6 @@
 #include <iostream>
 #include <png.h>
+#include <curand_kernel.h>
 
 #include "src/hittable_list.hpp"
 #include "src/sphere.hpp"
@@ -9,17 +10,17 @@
 #include "src/material.hpp"
 
 // limited version of checkCudaErrors from helper_cuda.h in CUDA examples
-//#define checkCudaErrors(val) check_cuda( (val), #val, __FILE__, __LINE__ )
+#define checkCudaErrors(val) check_cuda( (val), #val, __FILE__, __LINE__ )
 
-//void check_cuda(cudaError_t result, char const *const func, const char *const file, int const line) {
-//	if (result) {
-//		std::cerr << "CUDA error = " << static_cast<unsigned int>(result) << " at " <<
-//				  file << ":" << line << " '" << func << "' \n";
-//		// Make sure we call CUDA Device Reset before exiting
-//		cudaDeviceReset();
-//		exit(99);
-//	}
-//}
+void check_cuda(cudaError_t result, char const *const func, const char *const file, int const line) {
+	if (result) {
+		std::cerr << "CUDA error = " << static_cast<unsigned int>(result) << " at " <<
+				  file << ":" << line << " '" << func << "' \n";
+		// Make sure we call CUDA Device Reset before exiting
+		cudaDeviceReset();
+		exit(99);
+	}
+}
 
 colour ray_colour(const ray& r, const hittable& world, int max_depth);
 
@@ -171,6 +172,7 @@ colour ray_colour(const ray& r, const hittable& world, int depth)
 		return {0,0,0};
 	}
 
+	//sky
 	vec3 unit_direction = unit_vector(r.direction());
 	auto t = 0.5*(unit_direction.y() + 1.0);
 	return (1.0-t)*colour(1.0, 1.0, 1.0) + t*colour(0.5, 0.7, 1.0);
