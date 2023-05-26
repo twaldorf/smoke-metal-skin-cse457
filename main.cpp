@@ -1,5 +1,6 @@
 #include <iostream>
 #include <png.h>
+#include <cstring>
 
 #include "src/hittable_list.hpp"
 #include "src/sphere.hpp"
@@ -8,18 +9,20 @@
 #include "src/camera.hpp"
 #include "src/material.hpp"
 
-// limited version of checkCudaErrors from helper_cuda.h in CUDA examples
-//#define checkCudaErrors(val) check_cuda( (val), #val, __FILE__, __LINE__ )
+#ifdef USE_CUDA
+#include <curand_kernel.h>
+#define checkCudaErrors(val) check_cuda( (val), #val, __FILE__, __LINE__ )
 
-//void check_cuda(cudaError_t result, char const *const func, const char *const file, int const line) {
-//	if (result) {
-//		std::cerr << "CUDA error = " << static_cast<unsigned int>(result) << " at " <<
-//				  file << ":" << line << " '" << func << "' \n";
-//		// Make sure we call CUDA Device Reset before exiting
-//		cudaDeviceReset();
-//		exit(99);
-//	}
-//}
+void check_cuda(cudaError_t result, char const *const func, const char *const file, int const line) {
+	if (result) {
+		std::cerr << "CUDA error = " << static_cast<unsigned int>(result) << " at " <<
+				  file << ":" << line << " '" << func << "' \n";
+		// Make sure we call CUDA Device Reset before exiting
+		cudaDeviceReset();
+		exit(99);
+	}
+}
+#endif
 
 colour ray_colour(const ray& r, const hittable& world, int max_depth);
 
@@ -71,8 +74,22 @@ hittable_list random_scene() {
 	return world;
 }
 
-int main()
+int main(int argc, char **argv)
 {
+	#ifdef USE_CUDA
+	cudaDeviceProp prop{};
+	//just use default device (0)
+	cudaGetDeviceProperties(&prop, 0);
+
+	if(argc >= 2)
+	{
+		if(strcmp(argv[1], "--gpu") == 0)
+		{
+			std::cout << "Running on " << prop.name << std::endl;
+		}
+	}
+	#endif
+
 	//image
 	const auto aspect_ratio = 16.0/9.0;
 	const int image_width = 400; //1920 or 400
@@ -171,6 +188,7 @@ colour ray_colour(const ray& r, const hittable& world, int depth)
 		return {0,0,0};
 	}
 
+	//sky
 	vec3 unit_direction = unit_vector(r.direction());
 	auto t = 0.5*(unit_direction.y() + 1.0);
 	return (1.0-t)*colour(1.0, 1.0, 1.0) + t*colour(0.5, 0.7, 1.0);

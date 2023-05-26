@@ -1,5 +1,0 @@
-/home/braiden/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/231.8109.174/bin/cmake/linux/x64/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/home/braiden/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/231.8109.174/bin/ninja/linux/x64/ninja -G Ninja -S /home/braiden/CLionProjects/rtiow1 -B /home/braiden/CLionProjects/rtiow1/cmake-build-debug
-/opt/cuda/lib
--- Configuring done
--- Generating done
--- Build files have been written to: /home/braiden/CLionProjects/rtiow1/cmake-build-debug
