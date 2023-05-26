@@ -78,7 +78,6 @@ hittable_list random_scene() {
 int main(int argc, char **argv)
 {
 	#ifdef USE_CUDA
-
 	cudaDeviceProp prop{};
 	cudaGetDeviceProperties(&prop, 0);
 	if(argc >= 2)
