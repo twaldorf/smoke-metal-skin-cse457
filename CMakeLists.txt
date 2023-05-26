@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.21)
-project(rtiow1 LANGUAGES CXX CUDA)
+project(rtiow1 LANGUAGES CXX)
 
-set(CMAKE_CUDA_STANDARD 17)
 set(CUDA_PATH /opt/cuda/bin)
 set(EXE rtiow1)
 
@@ -21,6 +20,8 @@ else()
 endif()
 message("CUDA support: " ${CUDA_COMPILE})
 if(CUDA_COMPILE)
+    enable_language(CUDA)
+    set(CMAKE_CUDA_STANDARD 17)
     add_definitions(-DUSE_CUDA)
 endif()
 

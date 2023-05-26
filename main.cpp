@@ -9,7 +9,6 @@
 #include "src/camera.hpp"
 #include "src/material.hpp"
 
-// limited version of checkCudaErrors from helper_cuda.h in CUDA examples
 #ifdef USE_CUDA
 #include <curand_kernel.h>
 #define checkCudaErrors(val) check_cuda( (val), #val, __FILE__, __LINE__ )
@@ -79,7 +78,9 @@ int main(int argc, char **argv)
 {
 	#ifdef USE_CUDA
 	cudaDeviceProp prop{};
+	//just use default device (0)
 	cudaGetDeviceProperties(&prop, 0);
+
 	if(argc >= 2)
 	{
 		if(strcmp(argv[1], "--gpu") == 0)
