@@ -23,6 +23,8 @@ if(CUDA_COMPILE)
     enable_language(CUDA)
     set(CMAKE_CUDA_STANDARD 17)
     add_definitions(-DUSE_CUDA)
+else()
+    set(CMAKE_CXX_STANDARD 17)
 endif()
 
 
