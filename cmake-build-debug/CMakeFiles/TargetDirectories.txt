@@ -1,3 +1,0 @@
-/home/braiden/CSE457/smoke-metal-skin-cse457/cmake-build-debug/CMakeFiles/rtiow1.dir
-/home/braiden/CSE457/smoke-metal-skin-cse457/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/braiden/CSE457/smoke-metal-skin-cse457/cmake-build-debug/CMakeFiles/rebuild_cache.dir
