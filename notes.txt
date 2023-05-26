@@ -1,0 +1,15 @@
+Iif a given point (x,y,z) is on the sphere, then x^2+y^2+z^2=R^2.
+If the given point (x,y,z) is inside the sphere, then x^2+y^2+z^2<R^2,
+and if a given point (x,y,z) is outside the sphere, then x^2+y^2+z^2>R^2.
+
+It gets uglier if the sphere center is at (Cx,Cy,Cz):
+(x−Cx)^2+(y−Cy)^2+(z−Cz)^2=r^2
+
+((A+tb)−C)⋅((A+tb)−C)=r^2
+which becomes
+t^2b⋅b+2tb⋅(A−C)+(A−C)⋅(A−C)−r^2=0
+t is only unknown
+0 roots of t -> miss
+1 root of t -> hits but doesn't 'enter'
+2 roots of t -> enter and exit
+
