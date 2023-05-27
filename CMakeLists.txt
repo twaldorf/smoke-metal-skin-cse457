@@ -31,11 +31,11 @@ endif()
 set(SOURCE
         main.cpp src/vec3.cpp src/colour.cpp
         src/ray.cpp src/png.cpp
-        src/sphere.cpp src/hittable_list.cpp
-        src/camera.cpp src/utl.hpp src/vec3.hpp
+        src/sphere.cpp src/hitable_list.cpp
+        src/camera.cpp src/util.hpp src/vec3.hpp
         src/colour.hpp src/ray.hpp src/png.hpp
-        src/hittable.hpp src/sphere.hpp src/hittable_list.hpp
-        src/camera.hpp src/material.cpp src/material.hpp src/util.cpp)
+        src/hitable.hpp src/sphere.hpp src/hitable_list.hpp
+        src/camera.hpp src/material.cpp src/material.hpp src/util.cpp src/cuda.cu src/cuda.hpp src/world_gen.cpp src/world_gen.hpp)
 
 # check for libpng
 pkg_check_modules (LIBPNG libpng16 REQUIRED)
@@ -51,6 +51,15 @@ add_executable(${EXE} ${SOURCE})
 
 if(CUDA_COMPILE)
     message(${CUDAToolkit_LIBRARY_DIR})
+    set_property(TARGET ${EXE} PROPERTY CUDA_SEPARABLE_COMPILATION ON)
+    set_property(TARGET ${EXE} PROPERTY CUDA_RESOLVE_DEVICE_SYMBOLS ON)
+    set_source_files_properties(${SOURCE} PROPERTIES LANGUAGE CUDA)
+    target_compile_options(${EXE} PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:
+            --gpu-architecture=sm_89
+            -Xptxas=-v
+            -rdc=true
+            #--gpu-code=compute_80,sm_80,sm_89
+            >)
     target_link_libraries(${EXE} ${LIBPNG_LINK_FLAGS} PRIVATE CUDA::cudart CUDA::cuda_driver)
 else()
     target_link_libraries(${EXE} ${LIBPNG_LINK_FLAGS})

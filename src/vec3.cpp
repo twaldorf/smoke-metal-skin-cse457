@@ -1,21 +1,160 @@
+#include <curand_kernel.h>
 #include "vec3.hpp"
 
+#ifdef USE_CUDA
 //various vector utility function
-vec3 vec3::random()
+__device__ vec3 vec3::random(curandState *rand_state)
 {
-	return {random_double(), random_double(), random_double()};
+	return { curand_uniform(rand_state), curand_uniform(rand_state), curand_uniform(rand_state)};
 }
 
-vec3 vec3::random(double min, double max)
+__device__ vec3 vec3::random(FLOAT min, FLOAT max, curandState *rand_state)
 {
-	return {random_double(min, max), random_double(min, max), random_double(min, max)};
+	return { random_float(min, max, rand_state), random_float(min, max, rand_state), random_float(min, max, rand_state)};
 }
 
-double vec3::length_squared() const {
+__host__ __device__ FLOAT vec3::length_squared() const {
 	return e[0]*e[0] + e[1]*e[1] + e[2]*e[2];
 }
 
-double vec3::length() const
+__host__ __device__ FLOAT vec3::length() const
+{
+	return sqrt(this->length_squared());
+}
+
+__host__ std::ostream& operator<<(std::ostream &out, const vec3 &v)
+{
+	return out << v.e[0] << ' ' << v.e[1] << ' ' << v.e[2];
+}
+
+__host__ __device__ vec3 operator+(const vec3 &u, const vec3 &v)
+{
+	return {u.e[0] + v.e[0], u.e[1] + v.e[1], u.e[2] + v.e[2]};
+}
+
+__host__ __device__ vec3 operator-(const vec3 &u, const vec3 &v)
+{
+	return {u.e[0] - v.e[0], u.e[1] - v.e[1], u.e[2] - v.e[2]};
+}
+
+__host__ __device__ vec3 operator*(const vec3 &u, const vec3 &v)
+{
+	return {u.e[0] * v.e[0], u.e[1] * v.e[1], u.e[2] * v.e[2]};
+}
+
+__host__ __device__ vec3 operator*(FLOAT t, const vec3 &v)
+{
+	return {t*v.e[0], t*v.e[1], t*v.e[2]};
+}
+
+__host__ __device__ vec3 operator*(const vec3 &v, FLOAT t)
+{
+	return t * v;
+}
+
+__host__ __device__ vec3 operator/(vec3 v, FLOAT t)
+{
+	return (1/t) * v;
+}
+
+__host__ __device__ FLOAT dot(const vec3 &u, const vec3 &v)
+{
+	return u.e[0] * v.e[0]
+		+ u.e[1] * v.e[1]
+		+ u.e[2] * v.e[2];
+}
+
+__host__ __device__ vec3 cross(const vec3 &u, const vec3 &v)
+{
+	return {u.e[1] * v.e[2] - u.e[2] * v.e[1],
+			u.e[2] * v.e[0] - u.e[0] * v.e[2],
+			u.e[0] * v.e[1] - u.e[1] * v.e[0]};
+}
+
+__host__ __device__ vec3 unit_vector(vec3 v)
+{
+	return v / v.length();
+}
+
+
+//diffuse 1
+__device__ vec3 random_in_unit_sphere(curandState *rand_state)
+{
+	vec3 p;
+	do {
+		p = 2.0f*vec3(curand_uniform(rand_state),curand_uniform(rand_state),curand_uniform(rand_state)) - vec3(1,1,1);
+	} while (p.length_squared() >= 1.0f);
+	return p;
+}
+
+
+//diffuse 2
+__device__ vec3 random_unit_vector(curandState *rand_state)
+{
+	return unit_vector(random_in_unit_sphere(rand_state));
+}
+
+//diffuse 3
+__device__ vec3 random_in_hemisphere(const vec3& normal, curandState *rand_state)
+{
+	vec3 in_unit_sphere = random_in_unit_sphere(rand_state);
+	if(dot(in_unit_sphere, normal) > 0.0) // In the same hemisphere as the normal
+		return in_unit_sphere;
+	else
+		return -in_unit_sphere;
+}
+
+__host__ __device__ bool vec3::near_zero() const
+{
+	// Return true if the vector is close to zero in all dimensions.
+	const auto tolerance = 1e-8;
+	return (fabs(e[0]) < tolerance) && (fabs(e[1]) < tolerance) && (fabs(e[2]) < tolerance);
+}
+
+//calculate direction of a reflected ray
+__host__ __device__ vec3 reflect(const vec3& v, const vec3& n)
+{
+	//length of b is v*u then take that and multiply by n to "give it direction"
+	return v - 2*dot(v,n)*n;
+}
+
+//calculate a refracted ray's direction
+__host__ __device__ vec3 refract(const vec3& uv, const vec3& n, FLOAT eta_i_over_eta_t)
+{
+	FLOAT cos_theta = fmin(dot(-uv, n), 1.0f);
+	vec3 r_out_perp = eta_i_over_eta_t * (uv + cos_theta*n);
+	vec3 r_out_parallel = -sqrt(fabs(1.0 - r_out_perp.length_squared())) * n;
+
+	return r_out_perp + r_out_parallel;
+
+}
+
+//randomly generate a point in a 2d disk with a radius of 1 (a unit circle)
+__device__ vec3 random_in_unit_disk(curandState *rand_state)
+{
+	vec3 p;
+	do {
+		p = 2.0f*vec3(curand_uniform(rand_state),curand_uniform(rand_state),0) - vec3(1,1,0);
+	} while (p.length_squared() >= 1.0f);
+	return p;
+}
+#else
+//various vector utility function
+vec3 vec3::random()
+{
+	return { random_float(), random_float(), random_float()};
+}
+
+vec3 vec3::random(FLOAT min, FLOAT max)
+{
+	return { random_float(min, max), random_float(min, max), random_float(min, max)};
+}
+
+FLOAT vec3::length_squared() const {
+	return e[0]*e[0] + e[1]*e[1] + e[2]*e[2];
+}
+
+FLOAT vec3::length() const
 {
 	return sqrt(this->length_squared());
 }
@@ -40,22 +179,22 @@ vec3 operator*(const vec3 &u, const vec3 &v)
 	return {u.e[0] * v.e[0], u.e[1] * v.e[1], u.e[2] * v.e[2]};
 }
 
-vec3 operator*(double t, const vec3 &v)
+vec3 operator*(FLOAT t, const vec3 &v)
 {
 	return {t*v.e[0], t*v.e[1], t*v.e[2]};
 }
 
-vec3 operator*(const vec3 &v, double t)
+vec3 operator*(const vec3 &v, FLOAT t)
 {
 	return t * v;
 }
 
-vec3 operator/(vec3 v, double t)
+vec3 operator/(vec3 v, FLOAT t)
 {
 	return (1/t) * v;
 }
 
-double dot(const vec3 &u, const vec3 &v)
+FLOAT dot(const vec3 &u, const vec3 &v)
 {
 	return u.e[0] * v.e[0]
 		+ u.e[1] * v.e[1]
@@ -117,7 +256,7 @@ vec3 reflect(const vec3& v, const vec3& n)
 }
 
 //calculate a refracted ray's direction
-vec3 refract(const vec3& uv, const vec3& n, double eta_i_over_eta_t)
+vec3 refract(const vec3& uv, const vec3& n, FLOAT eta_i_over_eta_t)
 {
 	auto cos_theta = fmin(dot(-uv, n), 1.0);
 	vec3 r_out_perp = eta_i_over_eta_t * (uv + cos_theta*n);
@@ -132,9 +271,10 @@ vec3 random_in_unit_disk()
 {
 	while(true)
 	{
-		auto p = vec3(random_double(-1, 1), random_double(-1, 1), 0);
+		auto p = vec3(random_float(-1, 1), random_float(-1, 1), 0);
 		if(p.length_squared() >= 1)
 			continue;
 		return p;
 	}
 }
+#endif

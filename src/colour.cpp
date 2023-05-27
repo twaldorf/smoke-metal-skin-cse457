@@ -1,4 +1,4 @@
-#include "utl.hpp"
+#include "util.hpp"
 #include "colour.hpp"
 
 void write_colour(std::ostream &out, colour pixel_color, int samples_per_pixel) {
