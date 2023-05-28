@@ -22,11 +22,11 @@ __global__ void rand_init(curandState *rand_state)
 {
 	if (threadIdx.x == 0 && blockIdx.x == 0)
 	{
-		curand_init(1984, 0, 0, rand_state);
+		curand_init(2023, 0, 0, rand_state);
 	}
 }
 
-__global__ void render_init(int max_x, int max_y, curandState *rand_state)
+__global__ void gpu_render_init(int max_x, int max_y, curandState *rand_state)
 {
 	int i = threadIdx.x + blockIdx.x * blockDim.x;
 	int j = threadIdx.y + blockIdx.y * blockDim.y;
@@ -34,12 +34,12 @@ __global__ void render_init(int max_x, int max_y, curandState *rand_state)
 	int pixel_index = j*max_x + i;
 	// Original: Each thread gets same seed, a different sequence number, no offset
 	// curand_init(2023, pixel_index, 0, &rand_state[pixel_index]);
-	// BUGFIX, see Issue#2: Each thread gets different seed, same sequence for
+	// Each thread gets different seed, same sequence for
 	// performance improvement of about 2x!
-	curand_init(1984+pixel_index, 0, 0, &rand_state[pixel_index]);
+	curand_init(2023+pixel_index, 0, 0, &rand_state[pixel_index]);
 }
 
-__global__ void render(gpu_vec3 *fb, int image_width, int image_height, int samples_per_pixel, gpu_camera **cam, gpu_hitable **world, curandState *rand_state, int max_depth)
+__global__ void gpu_render(gpu_vec3 *fb, int image_width, int image_height, int samples_per_pixel, gpu_camera **cam, gpu_hitable **world, curandState *rand_state, int max_depth)
 {
 	int i = threadIdx.x + blockIdx.x * blockDim.x;
 	int j = threadIdx.y + blockIdx.y * blockDim.y;
@@ -62,9 +62,9 @@ __global__ void render(gpu_vec3 *fb, int image_width, int image_height, int samp
 	rand_state[pixel_index] = local_rand_state;
 
 	col /= FLOAT(samples_per_pixel);
-	col[0] = sqrt(col[0]);
-	col[1] = sqrt(col[1]);
-	col[2] = sqrt(col[2]);
+	col[0] = sqrt(col.x());
+	col[1] = sqrt(col.y());
+	col[2] = sqrt(col.z());
 	fb[pixel_index] = col;
 }
 

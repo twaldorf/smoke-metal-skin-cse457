@@ -35,7 +35,8 @@ set(SOURCE
         src/camera.cpp src/util.hpp src/vec3.hpp
         src/colour.hpp src/ray.hpp src/png.hpp
         src/hitable.hpp src/sphere.hpp src/hitable_list.hpp
-        src/camera.hpp src/material.cpp src/material.hpp src/util.cpp src/cuda.cu src/cuda.hpp src/world_gen.cpp src/world_gen.hpp)
+        src/camera.hpp src/material.cpp src/material.hpp src/util.cpp
+        src/cuda.cu src/cuda.hpp src/world_gen.cpp src/world_gen.hpp)
 
 # check for libpng
 pkg_check_modules (LIBPNG libpng16 REQUIRED)
