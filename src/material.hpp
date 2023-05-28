@@ -6,43 +6,66 @@
 #include "hitable.hpp"
 
 struct hit_record;
+struct gpu_hit_record;
+
+#ifdef USE_CUDA
+class gpu_material {
+ public:
+	__device__ virtual bool scatter(
+		const gpu_ray& r_in, const gpu_hit_record& rec, gpu_colour& attenuation, gpu_ray& scattered, curandState *rand_state
+	) const = 0;
+};
+
+class gpu_lambertian : public gpu_material {
+ public:
+	__device__ explicit gpu_lambertian(const gpu_colour& a) : albedo(a) {}
+	__device__ bool scatter(const gpu_ray& r, const gpu_hit_record& rec, gpu_colour& attenuation, gpu_ray& scattered, curandState *rand_state) const override;
+ public:
+	gpu_colour albedo;
+};
+
+class gpu_metal : public gpu_material {
+ public:
+	__device__ gpu_metal(const gpu_colour& a, FLOAT f) : albedo(a), fuzz(f < 1 ? f : 1) {}
+	__device__ bool scatter(const gpu_ray& r_in, const gpu_hit_record& rec, gpu_colour& attenuation, gpu_ray& scattered, curandState *rand_state) const override;
+ public:
+	gpu_colour albedo;
+	FLOAT fuzz;
+};
+
+class gpu_dielectric : public gpu_material {
+ public:
+	__device__	explicit gpu_dielectric(FLOAT index_of_refraction) : ir(index_of_refraction) {}
+	__device__ bool scatter(const gpu_ray& r_in, const gpu_hit_record& rec, gpu_colour& attenuation, gpu_ray& scattered, curandState *rand_state) const override;
+
+ public:
+	FLOAT ir;
+
+ private:
+	__device__ static FLOAT reflectance(FLOAT cosine, FLOAT ref_idx);
+};
+#endif
 
 //all materials must implement a scatter function
 class material {
  public:
-	#ifdef USE_CUDA
-	__device__ virtual bool scatter(
-		const ray& r_in, const hit_record& rec, colour& attenuation, ray& scattered, curandState *rand_state
-	) const = 0;
-	#else
 	virtual bool scatter(
 		const ray& r_in, const hit_record& rec, colour& attenuation, ray& scattered
 		) const = 0;
-	#endif
 };
 
 class lambertian : public material {
  public:
-	#ifdef USE_CUDA
-	__device__ explicit lambertian(const colour& a) : albedo(a) {}
-	__device__ bool scatter(const ray& r, const hit_record& rec, colour& attenuation, ray& scattered, curandState *rand_state) const override;
-	#else
 	explicit lambertian(const colour& a) : albedo(a) {}
 	bool scatter(const ray& r_in, const hit_record& rec, colour& attenuation, ray& scattered) const override;
-	#endif
  public:
 	colour albedo;
 };
 
 class metal : public material {
  public:
-	#ifdef USE_CUDA
-	__device__ metal(const colour& a, FLOAT f) : albedo(a), fuzz(f < 1 ? f : 1) {}
-	__device__ bool scatter(const ray& r_in, const hit_record& rec, colour& attenuation, ray& scattered, curandState *rand_state) const override;
-	#else
 	metal(const colour& a, FLOAT f) : albedo(a), fuzz(f < 1 ? f : 1) {}
 	bool scatter(const ray& r_in, const hit_record& rec, colour& attenuation, ray& scattered) const override;
-	#endif
  public:
 	colour albedo;
 	FLOAT fuzz;
@@ -50,22 +73,13 @@ class metal : public material {
 
 class dielectric : public material {
  public:
-	#ifdef USE_CUDA
-	__device__	explicit dielectric(double index_of_refraction) : ir(index_of_refraction) {}
-	__device__ bool scatter(const ray& r_in, const hit_record& rec, colour& attenuation, ray& scattered, curandState *rand_state) const override;
-#else
 	explicit dielectric(double index_of_refraction) : ir(index_of_refraction) {}
 	bool scatter(const ray& r_in, const hit_record& rec, colour& attenuation, ray& scattered) const override;
-	#endif
  public:
 	FLOAT ir;
 
  private:
-	#ifdef USE_CUDA
-	__device__ static FLOAT reflectance(FLOAT cosine, FLOAT ref_idx);
-	#else
 	static FLOAT reflectance(FLOAT cosine, FLOAT ref_idx);
-	#endif
 };
 
 #endif //RTIOW1_SRC_MATERIAL_HPP_

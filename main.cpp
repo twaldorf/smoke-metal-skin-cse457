@@ -26,6 +26,13 @@
 
 int main(int argc, char **argv)
 {
+	//image
+	const FLOAT aspect_ratio = 16.0/9.0;
+	const int image_width = 1080; //1920 or 400
+	const int image_height = static_cast<int>(image_width/aspect_ratio); //1080 or 225
+	const int samples_per_pixel = 500;
+	const int max_depth = 50;
+
 	#ifdef USE_CUDA
 	cudaDeviceProp prop{};
 	//just use default device (0)
@@ -38,23 +45,15 @@ int main(int argc, char **argv)
 			std::cout << "Running on " << prop.name << std::endl;
 		}
 	}
-	#endif
 
-	//image
-	const FLOAT aspect_ratio = 16.0/9.0;
-	const int image_width = 1920; //1920 or 400
-	const int image_height = static_cast<int>(image_width/aspect_ratio); //1080 or 225
-	const int samples_per_pixel = 500;
-	const int max_depth = 50;
-
-	#ifdef USE_CUDA
 	int blockY = 8;
 	int blockX = 8;
 	int pixels = image_height*image_width;
+	size_t fb_size = pixels*sizeof(gpu_vec3);
 
 	//framebuffer allocation
-	colour *fb;
-	checkCudaErrors(cudaMalloc((void **)&fb, pixels));
+	gpu_colour *fb;
+	checkCudaErrors(cudaMallocManaged((void **)&fb, fb_size));
 	// allocate random state
 	curandState *d_rand_state;
 	checkCudaErrors(cudaMalloc((void **)&d_rand_state, pixels*sizeof(curandState)));
@@ -65,13 +64,13 @@ int main(int argc, char **argv)
 	checkCudaErrors(cudaGetLastError());
 	checkCudaErrors(cudaDeviceSynchronize());
 
-	hitable **d_list;
+	gpu_hitable **d_list;
 	int num_hitables = 22*22+1+3;
-	checkCudaErrors(cudaMalloc((void **)&d_list, num_hitables*sizeof(hitable *)));
-	hitable **d_world;
-	checkCudaErrors(cudaMalloc((void **)&d_world, sizeof(hitable *)));
-	camera **d_camera;
-	checkCudaErrors(cudaMalloc((void **)&d_camera, sizeof(camera *)));
+	checkCudaErrors(cudaMalloc((void **)&d_list, num_hitables*sizeof(gpu_hitable *)));
+	gpu_hitable **d_world;
+	checkCudaErrors(cudaMalloc((void **)&d_world, sizeof(gpu_hitable *)));
+	gpu_camera **d_camera;
+	checkCudaErrors(cudaMalloc((void **)&d_camera, sizeof(gpu_camera *)));
 	create_world<<<1,1>>>(d_list, d_world, d_camera, image_width, image_height, d_rand_state2);
 	checkCudaErrors(cudaGetLastError());
 	checkCudaErrors(cudaDeviceSynchronize());
@@ -89,7 +88,7 @@ int main(int argc, char **argv)
 	checkCudaErrors(cudaDeviceSynchronize());
 	stop = clock();
 	double timer_seconds = ((double)(stop - start)) / CLOCKS_PER_SEC;
-	std::cerr << "took " << timer_seconds << " seconds.\n";
+	//std::cout << "took " << timer_seconds << " seconds.\n";
 
 	auto *row_pointers = (png_bytep*) malloc(image_height * sizeof(png_bytep));
 	for (int y = 0; y < image_height; y++)
@@ -97,18 +96,34 @@ int main(int argc, char **argv)
 		row_pointers[y] = (png_bytep) malloc(3*image_width * sizeof(png_byte));
 	}
 
-	for (int i = image_height-1; i >= 0; i--) {
-		for (int j = 0; j < image_width; j++) {
+	//	std::cout << "P3\n" << image_width << " " << image_height << "\n255\n";
+	//	for (int j = image_height-1; j >= 0; j--) {
+	//		for (int i = 0; i < image_width; i++) {
+	//			size_t pixel_index = j*image_width + i;
+	//			int ir = int(255.99*fb[pixel_index].x());
+	//			int ig = int(255.99*fb[pixel_index].y());
+	//			int ib = int(255.99*fb[pixel_index].z());
+	//			std::cout << ir << " " << ig << " " << ib << "\n";
+	//		}
+	//	}
+
+	for (int i = 0; i < image_height; i++)
+	{
+		for (int j = 0; j < image_width; j++)
+		{
 			size_t pixel_index = i*image_width + j;
-			int ir = int(255.99*fb[pixel_index].x());
-			int ig = int(255.99*fb[pixel_index].y());
-			int ib = int(255.99*fb[pixel_index].z());
-			row_pointers[i][3*j] = static_cast<png_byte>(256 * clamp(ir, 0.0, 0.999));
-			row_pointers[i][3*j+1] = static_cast<png_byte>(256 * clamp(ig, 0.0, 0.999));
-			row_pointers[i][3*j+2] = static_cast<png_byte>(256 * clamp(ib, 0.0, 0.999));
+			row_pointers[image_height - 1 - i][3*j] = static_cast<png_byte>(255.99*fb[pixel_index].x());
+			row_pointers[image_height - 1 - i][3*j+1] = static_cast<png_byte>(255.99*fb[pixel_index].y());
+			row_pointers[image_height - 1 - i][3*j+2] = static_cast<png_byte>(255.99*fb[pixel_index].z());
 		}
 	}
 
+	save_as_png(image_height, image_width, row_pointers, "../image.png");
+	for (int y = 0; y < image_height; y++)
+	{
+		free(row_pointers[y]);
+	}
+	free(row_pointers);
 
 	// clean up
 	checkCudaErrors(cudaDeviceSynchronize());
@@ -141,6 +156,8 @@ int main(int argc, char **argv)
 		row_pointers[y] = (png_bytep) malloc(3*image_width * sizeof(png_byte));
 	}
 
+	clock_t start, stop;
+	start = clock();
 	for(int i = 0; i < image_height; i++)
 	{
 		//if(i % 10 == 0)
@@ -167,7 +184,9 @@ int main(int argc, char **argv)
 			row_pointers[i][3*j+2] = static_cast<png_byte>(256 * clamp(b, 0.0, 0.999));
 		}
 	}
-
+	stop = clock();
+	double timer_seconds = ((double)(stop - start)) / CLOCKS_PER_SEC;
+	std::cout << "took " << timer_seconds << " seconds.\n";
 	save_as_png(image_height, image_width, row_pointers, "../image.png");
 	for (int y = 0; y < image_height; y++)
 	{

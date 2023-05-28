@@ -2,9 +2,9 @@
 
 #ifdef USE_CUDA
 
-__device__ bool hitable_list::hit(const ray& r, float t_min, float t_max, hit_record& rec) const
+__device__ bool gpu_hitable_list::hit(const gpu_ray& r, float t_min, float t_max, gpu_hit_record& rec) const
 {
-	hit_record tempRecord;
+	gpu_hit_record tempRecord;
 	bool hitAnything = false;
 	FLOAT closest_so_far = t_max;
 
@@ -20,7 +20,8 @@ __device__ bool hitable_list::hit(const ray& r, float t_min, float t_max, hit_re
 	return hitAnything;
 }
 
-#else
+#endif
+
 bool hitable_list::hit(const ray& r, FLOAT t_min, FLOAT t_max, hit_record& rec) const
 {
 	hit_record temp_rec;
@@ -43,4 +44,3 @@ bool hitable_list::hit(const ray& r, FLOAT t_min, FLOAT t_max, hit_record& rec) 
 
 	return hit_anything;
 }
-#endif

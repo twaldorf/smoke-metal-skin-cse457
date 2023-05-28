@@ -6,36 +6,40 @@
 
 //forward declaration to avoid circular dependencies
 class hitable;
+class gpu_hitable;
+
+#ifdef USE_CUDA
+class gpu_ray {
+ public:
+	__device__ gpu_ray() = default;
+	__device__ gpu_ray(const gpu_vec3& origin, const gpu_vec3& direction) : gpu_orig(origin), gpu_dir(direction) {}
+	__device__ gpu_point3 origin() const { return gpu_orig; }
+	__device__ gpu_vec3 direction() const { return gpu_dir; }
+	__device__ gpu_point3 at(float t) const { return gpu_orig + t*gpu_dir; }
+
+ public:
+	gpu_point3 gpu_orig;
+	gpu_vec3 gpu_dir;
+
+};
+
+__device__ gpu_colour gpu_ray_colour(const gpu_ray& r, gpu_hitable **world, curandState *rand_state, int max_depth);
+#endif
 
 class ray {
  public:
-	#ifdef USE_CUDA
-	__device__ ray() = default;
-	__device__ ray(const vec3& origin, const vec3& direction) : orig(origin), dir(direction) {}
-	__device__ point3 origin() const { return orig; }
-	__device__ vec3 direction() const { return dir; }
-	__device__ point3 at(float t) const { return orig + t*dir; }
-	#else
 	ray() = default;
-	ray(const point3& origin, const vec3& direction)
-	: orig(origin), dir(direction) {}
-
+	ray(const vec3& origin, const vec3& direction) : orig(origin), dir(direction) {}
 	point3 origin() const { return orig; }
 	vec3 direction() const { return dir; }
-
-	point3 at(double t) const {
-		return orig + t*dir;
-	}
-	#endif
+	point3 at(float t) const { return orig + t*dir; }
 
  public:
 	point3 orig;
 	vec3 dir;
+
 };
-#ifdef USE_CUDA
-__device__ colour ray_colour(const ray& r, hitable **world, curandState *rand_state, int max_depth);
-#else
+
 colour ray_colour(const ray& r, const hitable& world, int max_depth);
-#endif
 
 #endif //RTIOW1_SRC_RAY_HPP_

@@ -51,15 +51,18 @@ add_executable(${EXE} ${SOURCE})
 
 if(CUDA_COMPILE)
     message(${CUDAToolkit_LIBRARY_DIR})
-    set_property(TARGET ${EXE} PROPERTY CUDA_SEPARABLE_COMPILATION ON)
-    set_property(TARGET ${EXE} PROPERTY CUDA_RESOLVE_DEVICE_SYMBOLS ON)
     set_source_files_properties(${SOURCE} PROPERTIES LANGUAGE CUDA)
     target_compile_options(${EXE} PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:
-            --gpu-architecture=sm_89
+            -Wall
+            -Wextra
+            -gencode arch=compute_89,code=sm_89
+            -m64
             -Xptxas=-v
             -rdc=true
             #--gpu-code=compute_80,sm_80,sm_89
             >)
+    set_property(TARGET ${EXE} PROPERTY CUDA_SEPARABLE_COMPILATION ON)
+    set_property(TARGET ${EXE} PROPERTY CUDA_RESOLVE_DEVICE_SYMBOLS ON)
     target_link_libraries(${EXE} ${LIBPNG_LINK_FLAGS} PRIVATE CUDA::cudart CUDA::cuda_driver)
 else()
     target_link_libraries(${EXE} ${LIBPNG_LINK_FLAGS})

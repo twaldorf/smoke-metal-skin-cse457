@@ -1,11 +1,11 @@
 #include "sphere.hpp"
 
 #ifdef USE_CUDA
-__device__ bool sphere::hit(const ray& r, float t_min, float t_max, hit_record& rec) const
+__device__ bool gpu_sphere::hit(const gpu_ray& r, float t_min, float t_max, gpu_hit_record& rec) const
 {
-	vec3 oc = r.origin() - center;
-	FLOAT a = dot(r.direction(), r.direction());
-	FLOAT half_b = dot(oc, r.direction());
+	gpu_vec3 oc = r.origin() - center;
+	FLOAT a = gpu_dot(r.direction(), r.direction());
+	FLOAT half_b = gpu_dot(oc, r.direction());
 	FLOAT c = oc.length_squared() - radius*radius;
 	FLOAT discriminant = half_b*half_b - a*c;
 
@@ -24,14 +24,14 @@ __device__ bool sphere::hit(const ray& r, float t_min, float t_max, hit_record& 
 	//return info about the intersection
 	rec.t = root;
 	rec.p = r.at(rec.t);
-	vec3 outward_normal = (rec.p - center) / radius;
+	gpu_vec3 outward_normal = (rec.p - center) / radius;
 	rec.set_face_normal(r, outward_normal);
 	rec.mat_ptr = mat_ptr;
 
 	return true;
 }
 
-#else
+#endif
 //test if ray hits sphere
 bool sphere::hit(const ray& r, FLOAT t_min, FLOAT t_max, hit_record& rec) const
 {
@@ -63,4 +63,3 @@ bool sphere::hit(const ray& r, FLOAT t_min, FLOAT t_max, hit_record& rec) const
 
 	return true;
 }
-#endif

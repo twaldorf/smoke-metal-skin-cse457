@@ -2,9 +2,6 @@
 #include "material.hpp"
 #include "sphere.hpp"
 
-#ifdef USE_CUDA
-//cuda.cu
-#else
 //create random scene
 hitable_list random_scene()
 {
@@ -37,8 +34,7 @@ hitable_list random_scene()
 					// glass
 					sphere_material = make_shared<dielectric>(1.5);
 					world.add(make_shared<sphere>(center, 0.2, sphere_material));
-		n, float t_max, hit_record& rec) const;
-		}
+				}
 			}
 		}
 	}
@@ -54,4 +50,3 @@ hitable_list random_scene()
 
 	return world;
 }
-#endif
