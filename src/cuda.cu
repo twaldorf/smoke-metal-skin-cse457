@@ -103,11 +103,11 @@ __global__ void create_world(gpu_hitable **d_list, gpu_hitable **d_world, gpu_ca
 		gpu_vec3 lookfrom(13,2,3);
 		gpu_vec3 lookat(0,0,0);
 		FLOAT dist_to_focus = 10.0; (lookfrom-lookat).length();
-		FLOAT aperture = 0.1;
+		FLOAT aperture = 0.05;
 		*d_camera = new gpu_camera(lookfrom,
 			lookat,
 			gpu_vec3(0,1,0),
-			30.0,
+			20.0,
 			FLOAT(nx)/FLOAT(ny),
 			aperture,
 			dist_to_focus);

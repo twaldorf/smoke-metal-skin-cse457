@@ -53,8 +53,6 @@ if(CUDA_COMPILE)
     message(${CUDAToolkit_LIBRARY_DIR})
     set_source_files_properties(${SOURCE} PROPERTIES LANGUAGE CUDA)
     target_compile_options(${EXE} PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:
-            -Wall
-            -Wextra
             -gencode arch=compute_89,code=sm_89
             -m64
             -Xptxas=-v
