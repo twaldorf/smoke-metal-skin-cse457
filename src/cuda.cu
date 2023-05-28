@@ -8,7 +8,8 @@
 
 void check_cuda(cudaError_t result, char const *const func, const char *const file, int const line)
 {
-	if (result) {
+	if (result)
+	{
 		std::cerr << "CUDA error = " << static_cast<unsigned int>(result) << " at " <<
 				  file << ":" << line << " '" << func << "' \n";
 		// Make sure we call CUDA Device Reset before exiting
@@ -19,7 +20,8 @@ void check_cuda(cudaError_t result, char const *const func, const char *const fi
 
 __global__ void rand_init(curandState *rand_state)
 {
-	if (threadIdx.x == 0 && blockIdx.x == 0) {
+	if (threadIdx.x == 0 && blockIdx.x == 0)
+	{
 		curand_init(1984, 0, 0, rand_state);
 	}
 }
@@ -74,19 +76,24 @@ __global__ void create_world(gpu_hitable **d_list, gpu_hitable **d_world, gpu_ca
 		d_list[0] = new gpu_sphere(gpu_vec3(0,-1000.0,-1), 1000,
 			new gpu_lambertian(gpu_vec3(0.5, 0.5, 0.5)));
 		int i = 1;
-		for(int a = -11; a < 11; a++) {
-			for(int b = -11; b < 11; b++) {
+		for(int a = -11; a < 11; a++)
+		{
+			for(int b = -11; b < 11; b++)
+			{
 				FLOAT choose_mat = curand_uniform(&local_rand_state);
 				gpu_vec3 center(a+curand_uniform(&local_rand_state), 0.2, b+curand_uniform(&local_rand_state));
-				if(choose_mat < 0.8f) {
+				if(choose_mat < 0.8f)
+				{
 					d_list[i++] = new gpu_sphere(center, 0.2,
 						new gpu_lambertian(gpu_vec3(curand_uniform(&local_rand_state)*curand_uniform(&local_rand_state), curand_uniform(&local_rand_state)*curand_uniform(&local_rand_state), curand_uniform(&local_rand_state)*curand_uniform(&local_rand_state))));
 				}
-				else if(choose_mat < 0.95f) {
+				else if(choose_mat < 0.95f)
+				{
 					d_list[i++] = new gpu_sphere(center, 0.2,
 						new gpu_metal(gpu_vec3(0.5f*(1.0f+curand_uniform(&local_rand_state)), 0.5f*(1.0f+curand_uniform(&local_rand_state)), 0.5f*(1.0f+curand_uniform(&local_rand_state))), 0.5f*curand_uniform(&local_rand_state)));
 				}
-				else {
+				else
+				{
 					d_list[i++] = new gpu_sphere(center, 0.2, new gpu_dielectric(1.5));
 				}
 			}
@@ -116,7 +123,8 @@ __global__ void create_world(gpu_hitable **d_list, gpu_hitable **d_world, gpu_ca
 
 __global__ void free_world(gpu_hitable **d_list, gpu_hitable **d_world, gpu_camera **d_camera)
 {
-	for(int i=0; i < 22*22+1+3; i++) {
+	for(int i=0; i < 22*22+1+3; i++)
+	{
 		delete ((gpu_sphere *)d_list[i])->mat_ptr;
 		delete d_list[i];
 	}

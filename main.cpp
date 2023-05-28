@@ -26,7 +26,7 @@ int main(int argc, char **argv)
 	const FLOAT aspect_ratio = 16.0/9.0;
 	const int image_width = 1280; //1920 or 400
 	const int image_height = static_cast<int>(image_width/aspect_ratio); //1080 or 225
-	const int samples_per_pixel = 500;
+	const int samples_per_pixel = 100;
 	const int max_depth = 50;
 
 	auto *row_pointers = (png_bytep*) malloc(image_height * sizeof(png_bytep));
@@ -138,13 +138,6 @@ int main(int argc, char **argv)
 	FLOAT aperture = 0.05; //bigger = more DoF
 
 	camera cam(lookfrom, lookat, vup, 20, aspect_ratio, aperture, dist_to_focus);
-
-	//render
-	row_pointers = (png_bytep*)malloc(image_height * sizeof(png_bytep));
-	for (int y = 0; y < image_height; y++)
-	{
-		row_pointers[y] = (png_bytep)malloc(3 * image_width * sizeof(png_byte));
-	}
 
 	start = clock();
 	for (int i = 0; i < image_height; i++)
