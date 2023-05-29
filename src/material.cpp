@@ -110,3 +110,10 @@ FLOAT dielectric::reflectance(FLOAT cosine, FLOAT ref_idx)
 	return r0 + (1-r0)*pow((1-cosine), 5);
 }
 
+
+
+bool isotropic::scatter(const ray &r_in, const hit_record &rec, colour &attenuation, ray &scattered) const {
+    scattered = ray(rec.p, random_in_unit_sphere());
+    attenuation = *albedo;
+    return true;
+}

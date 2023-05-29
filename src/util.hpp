@@ -39,4 +39,6 @@ FLOAT random_float(FLOAT min, FLOAT max);
 
 FLOAT clamp(FLOAT x, FLOAT min, FLOAT max);
 
+double random_double();
+
 #endif

@@ -82,4 +82,16 @@ class dielectric : public material {
 	static FLOAT reflectance(FLOAT cosine, FLOAT ref_idx);
 };
 
+class isotropic : public material {
+public:
+    isotropic(colour c) : albedo(make_shared<colour>(c)) {}
+
+    virtual bool scatter(
+            const ray& r_in, const hit_record& rec, colour& attenuation, ray& scattered
+    ) const override;
+
+public:
+    shared_ptr<colour> albedo;
+};
+
 #endif //RTIOW1_SRC_MATERIAL_HPP_
