@@ -29,18 +29,18 @@ bool dielectric::scatter(const ray& r_in, const hit_record& rec, colour& attenua
 	attenuation = colour(1.0, 1.0, 1.0);
 
 	// n1/n2, n1 =1 so 1/n2 or n2/1
-	double refraction_ratio = rec.front_face ? (1.0/ir) : ir;
+	FLOAT refraction_ratio = rec.front_face ? (1.0/ir) : ir;
 
 	vec3 unit_direction = unit_vector(r_in.direction());
-	double cos_theta = fmin(dot(-unit_direction, rec.normal), 1.0);
-	double sin_theta = sqrt(1.0 - cos_theta*cos_theta); //trig identity
+	FLOAT cos_theta = fmin(dot(-unit_direction, rec.normal), 1.0);
+	FLOAT sin_theta = sqrt(1.0 - cos_theta*cos_theta); //trig identity
 
 	//check for total internal reflection
 	bool cannot_refract = refraction_ratio * sin_theta > 1.0;
 	vec3 direction;
 
 	//total internal reflection
-	if (cannot_refract || reflectance(cos_theta, refraction_ratio) > random_double())
+	if (cannot_refract || reflectance(cos_theta, refraction_ratio) > random_float())
 		direction = reflect(unit_direction, rec.normal);
 	//normal refraction
 	else
@@ -50,7 +50,7 @@ bool dielectric::scatter(const ray& r_in, const hit_record& rec, colour& attenua
 	return true;
 }
 
-double dielectric::reflectance(double cosine, double ref_idx)
+FLOAT dielectric::reflectance(FLOAT cosine, FLOAT ref_idx)
 {
 	//Schlick's approximation
 	// https://link.springer.com/chapter/10.1007/978-1-4842-7185-8_9 for full equation
@@ -58,3 +58,4 @@ double dielectric::reflectance(double cosine, double ref_idx)
 	r0 *= r0;
 	return r0 + (1-r0)*pow((1-cosine), 5);
 }
+

@@ -1,21 +1,22 @@
 #ifndef RTIOW1_SRC_CAMERA_HPP_
 #define RTIOW1_SRC_CAMERA_HPP_
 
+#include "vec3.hpp"
 #include "ray.hpp"
-#include "utl.hpp"
+#include "util.hpp"
 
 class camera {
  public:
 	camera(point3 lookfrom,
 		point3 lookat,
 		vec3 vup,
-		double vfov,
-		double aspect_ratio,
-		double aperture,
-		double focus_dist
+		FLOAT vfov,
+		FLOAT aspect_ratio,
+		FLOAT aperture,
+		FLOAT focus_dist
 		);
 
-	ray get_ray(double s, double t) const;
+	ray get_ray(FLOAT s, FLOAT t) const;
 
  private:
 	point3 origin;
@@ -23,7 +24,7 @@ class camera {
 	vec3 horizontal;
 	vec3 vertical;
 	vec3 u, v, w;
-	double lens_radius;
+	FLOAT lens_radius;
 };
 
 #endif //RTIOW1_SRC_CAMERA_HPP_

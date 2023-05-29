@@ -1,20 +1,20 @@
 #ifndef RTIOW1_SRC_SPHERE_HPP_
 #define RTIOW1_SRC_SPHERE_HPP_
 
-#include "hittable.hpp"
+#include "hitable.hpp"
 #include "vec3.hpp"
 
-class sphere : public hittable {
+class sphere : public hitable {
  public:
-	sphere() {}
-	sphere(point3 cen, double r, shared_ptr<material> m) : center(cen), radius(r), mat_ptr(m) {};
+	sphere(point3 cen, FLOAT r, shared_ptr<material> m) : center(cen), radius(r), mat_ptr(m) {};
 
-	virtual bool hit(const ray& r, double t_min, double t_max, hit_record& rec) const override;
-
- public:
-	point3 center;
-	double radius;
+	bool hit(const ray& r, FLOAT t_min, FLOAT t_max, hit_record& rec) const override;
 	shared_ptr<material> mat_ptr;
+
+
+	point3 center;
+	FLOAT radius;
+
 };
 
 #endif //RTIOW1_SRC_SPHERE_HPP_

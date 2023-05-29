@@ -1,9 +1,9 @@
 #include "sphere.hpp"
 
 //test if ray hits sphere
-bool sphere::hit(const ray& r, double t_min, double t_max, hit_record& rec) const
+bool sphere::hit(const ray& r, FLOAT t_min, FLOAT t_max, hit_record& rec) const
 {
-	// math to detect if the a value on the ray can solve x^2+y^2+z^2=r^2
+	// math to detect if a value on the ray can solve x^2+y^2+z^2=r^2
 	vec3 oc = r.origin() - center;
 	auto a = r.direction().length_squared();
 	auto half_b = dot(oc, r.direction());

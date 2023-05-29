@@ -1,25 +1,27 @@
-#include "utl.hpp"
+#include "util.hpp"
+#include "material.hpp"
+#include "sphere.hpp"
 
-double degrees_to_radians(double degrees)
+FLOAT degrees_to_radians(FLOAT degrees)
 {
-	return degrees * pi / 180.0;
+	return degrees * pi / 180.0f;
 }
 
-double random_double()
+FLOAT random_float()
 {
 	//higher values=more fuzzy
-	static std::uniform_real_distribution<double> distribution(0.0, 1.0);
+	static std::uniform_real_distribution<FLOAT> distribution(0.0, 1.0);
 	static std::mt19937 generator;
 	return distribution(generator);
 }
 
-double random_double(double min, double max)
+FLOAT random_float(FLOAT min, FLOAT max)
 {
 	// Returns a random real in [min,max).
-	return min + (max - min) * random_double();
+	return min + (max - min) * random_float();
 }
 
-double clamp(double x, double min, double max)
+FLOAT clamp(FLOAT x, FLOAT min, FLOAT max)
 {
 	if (x < min)
 		return min;
