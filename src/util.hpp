@@ -14,6 +14,13 @@ using std::shared_ptr;
 using std::make_shared;
 using std::sqrt;
 
+struct screenInfo {
+	int image_width;
+	int image_height;
+	int samples;
+	int max_depth;
+};
+
 const FLOAT pi = 3.14159265358979323846;
 
 FLOAT degrees_to_radians(FLOAT degrees);

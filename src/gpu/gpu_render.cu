@@ -1,9 +1,10 @@
 #include <cstdlib>
 #include <iostream>
-#include "cuda.hpp"
+#include "gpu_render.hpp"
 #include "gpu_sphere.hpp"
 #include "gpu_material.hpp"
 #include "gpu_hitable_list.hpp"
+#include "../util.hpp"
 
 void check_cuda(cudaError_t result, char const *const func, const char *const file, int const line)
 {
@@ -129,4 +130,62 @@ __global__ void free_world(gpu_hitable **d_list, gpu_hitable **d_world, gpu_came
 	}
 	delete *d_world;
 	delete *d_camera;
+}
+
+__host__ void start_gpu_render(gpu_colour *fb, screenInfo screen)
+{
+	clock_t start, stop;
+	double timer_seconds;
+
+	cudaDeviceProp prop{};
+	//just use default device (0)
+	cudaGetDeviceProperties(&prop, 0);
+
+	std::cout << "Running on " << prop.name << std::endl;
+
+	int blockY = 8;
+	int blockX = 8;
+
+	// allocate random state
+	curandState *d_rand_state;
+	checkCudaErrors(cudaMalloc((void **)&d_rand_state, screen.image_width*screen.image_height*sizeof(curandState)));
+	curandState *d_rand_state2;
+	checkCudaErrors(cudaMalloc((void **)&d_rand_state2, 1*sizeof(curandState)));
+
+	rand_init<<<1,1>>>(d_rand_state2);
+	checkCudaErrors(cudaGetLastError());
+	checkCudaErrors(cudaDeviceSynchronize());
+
+	gpu_hitable **d_list;
+	int num_hitables = 22*22+1+3;
+	checkCudaErrors(cudaMalloc((void **)&d_list, num_hitables*sizeof(gpu_hitable *)));
+	gpu_hitable **d_world;
+	checkCudaErrors(cudaMalloc((void **)&d_world, sizeof(gpu_hitable *)));
+	gpu_camera **d_camera;
+	checkCudaErrors(cudaMalloc((void **)&d_camera, sizeof(gpu_camera *)));
+	create_world<<<1,1>>>(d_list, d_world, d_camera, screen.image_width, screen.image_height, d_rand_state2);
+	checkCudaErrors(cudaGetLastError());
+	checkCudaErrors(cudaDeviceSynchronize());
+
+	start = clock();
+	// Render our buffer
+	dim3 blocks(screen.image_width/blockX+1, screen.image_height/blockY+1);
+	dim3 threads(blockX, blockY);
+	gpu_render_init<<<blocks, threads>>>(screen.image_width, screen.image_height, d_rand_state);
+	checkCudaErrors(cudaGetLastError());
+	checkCudaErrors(cudaDeviceSynchronize());
+	gpu_render<<<blocks, threads>>>(fb, screen.image_width, screen.image_height, screen.samples, d_camera, d_world, d_rand_state, screen.max_depth);
+	checkCudaErrors(cudaGetLastError());
+	checkCudaErrors(cudaDeviceSynchronize());
+	stop = clock();
+	timer_seconds = ((double)(stop - start)) / CLOCKS_PER_SEC;
+	std::cout << "took " << timer_seconds << " seconds with GPU.\n";
+
+	free_world<<<1,1>>>(d_list,d_world,d_camera);
+	checkCudaErrors(cudaGetLastError());
+	checkCudaErrors(cudaFree(d_camera));
+	checkCudaErrors(cudaFree(d_world));
+	checkCudaErrors(cudaFree(d_list));
+	checkCudaErrors(cudaFree(d_rand_state));
+	checkCudaErrors(cudaFree(d_rand_state2));
 }
