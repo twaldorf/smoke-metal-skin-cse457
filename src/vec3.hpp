@@ -3,13 +3,13 @@
 
 #include <cmath>
 #include <iostream>
-#include <curand.h>
-#include <curand_kernel.h>
 #include "util.hpp"
 
 using std::sqrt;
 
 #ifdef USE_CUDA
+#include <curand.h>
+#include <curand_kernel.h>
 class gpu_vec3
 {
  public:
@@ -143,6 +143,10 @@ __device__ gpu_vec3 gpu_random_in_hemisphere(const gpu_vec3& normal, curandState
 __device__ gpu_vec3 gpu_reflect(const gpu_vec3& v, const gpu_vec3& n);
 __device__ gpu_vec3 gpu_refract(const gpu_vec3& uv, const gpu_vec3& n, FLOAT etai_over_etat);
 __device__ gpu_vec3 gpu_random_in_unit_disk(curandState *rand_state);
+
+using gpu_point3 = gpu_vec3;   // 3D point
+using gpu_colour = gpu_vec3;
+
 #endif
 
 std::ostream& operator<<(std::ostream &out, const vec3 &v);
@@ -166,7 +170,5 @@ vec3 random_in_unit_disk();
 
 using point3 = vec3;   // 3D point
 using colour = vec3;    // RGB color
-using gpu_point3 = gpu_vec3;   // 3D point
-using gpu_colour = gpu_vec3;
 
 #endif

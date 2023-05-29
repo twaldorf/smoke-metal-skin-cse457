@@ -1,7 +1,6 @@
 #ifndef RTIOW1_SRC_RAY_HPP_
 #define RTIOW1_SRC_RAY_HPP_
 
-#include <curand_kernel.h>
 #include "vec3.hpp"
 
 //forward declaration to avoid circular dependencies
@@ -9,6 +8,8 @@ class hitable;
 class gpu_hitable;
 
 #ifdef USE_CUDA
+#include <curand_kernel.h>
+
 class gpu_ray {
  public:
 	__device__ gpu_ray() = default;

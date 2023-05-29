@@ -1,7 +1,8 @@
-#include <curand_kernel.h>
 #include "vec3.hpp"
 
 #ifdef USE_CUDA
+#include <curand_kernel.h>
+
 //various vector utility function
 __device__ gpu_vec3 gpu_vec3::random(curandState *rand_state)
 {

@@ -4,10 +4,12 @@
 #include "ray.hpp"
 #include "material.hpp"
 
+class material;
+
 #ifdef USE_CUDA
 #include <curand_kernel.h>
 class gpu_material;
-class material;
+
 //data about each intersection
 struct gpu_hit_record {
 	//point and normal of the intersection

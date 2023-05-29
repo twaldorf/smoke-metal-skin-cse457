@@ -1,4 +1,5 @@
 #include <iostream>
+#include <syncstream>
 #include <png.h>
 #include <ctime>
 #include <cstring>
@@ -26,9 +27,9 @@ int main(int argc, char **argv)
 {
 	//image
 	const FLOAT aspect_ratio = 16.0/9.0;
-	const int image_width = 1080; //1920 or 400
+	const int image_width = 400; //1920 or 400
 	const int image_height = static_cast<int>(image_width/aspect_ratio); //1080 or 225
-	const int samples_per_pixel = 250;
+	const int samples_per_pixel = 50;
 	const int max_depth = 50;
 
 	auto *row_pointers = (png_bytep*) malloc(image_height * sizeof(png_bytep));
@@ -147,33 +148,39 @@ int main(int argc, char **argv)
 
 	camera cam(lookfrom, lookat, vup, 20, aspect_ratio, aperture, dist_to_focus);
 
+	int blockSizeX = 32;
+	int blockSizeY = 32;
 	start = clock();
-	for (int i = 0; i < image_height; i++)
+	int xBlocks = image_width/blockSizeX;
+	int yBlocks = image_height/blockSizeY;
+	auto *threads = new std::thread[(xBlocks+1) * (yBlocks+1)];
+	for (int i = 0; i < xBlocks+1; i++)
 	{
-		if (i % 10 == 0)
-			std::cerr << "\rScanlines remaining: " << (image_height - i) << ' ' << std::endl;
-		for (int j = 0; j < image_width; j++)
+		for (int j = 0; j < yBlocks+1; j++)
 		{
-			render(fb, cam, world, ?,?, 8, 8, image_height, image_width, samples_per_pixel, max_depth);
+			threads[(yBlocks+1)*i + j] = std::thread(render, fb, cam, world, i, j, blockSizeX, blockSizeY, image_height, image_width, samples_per_pixel, max_depth);
+			//render(fb, cam, world, i, j, blockSizeX, blockSizeY, image_height, image_width, samples_per_pixel, max_depth);
 		}
 	}
+	for(int i = 0; i < (xBlocks+1) * (yBlocks+1); i++)
+	{
+		threads[i].join();
+	}
 	stop = clock();
-	timer_seconds = ((double)(stop - start)) / CLOCKS_PER_SEC;
+	timer_seconds = ((double)(stop - start)) / CLOCKS_PER_SEC / cpuCount;
 	std::cout << "took " << timer_seconds << " seconds with CPU\n";
 
 	for (int i = 0; i < image_height; i++)
 	{
 		for (int j = 0; j < image_width; j++)
 		{
-			auto scale = 1.0 / samples_per_pixel;
-			auto r = sqrt(fb[i*image_height + j].x() * scale);
-			auto g = sqrt(fb[i*image_height + j].y() * scale);
-			auto b = sqrt(fb[i*image_height + j].z() * scale);
-			row_pointers[i][3 * j] = static_cast<png_byte>(256 * clamp(r, 0.0, 0.999));
-			row_pointers[i][3 * j + 1] = static_cast<png_byte>(256 * clamp(g, 0.0, 0.999));
-			row_pointers[i][3 * j + 2] = static_cast<png_byte>(256 * clamp(b, 0.0, 0.999));
+			size_t pixel_index = i*image_width + j;
+			row_pointers[image_height - 1 - i][3*j] = static_cast<png_byte>(255.99*fb[pixel_index].x());
+			row_pointers[image_height - 1 - i][3*j+1] = static_cast<png_byte>(255.99*fb[pixel_index].y());
+			row_pointers[image_height - 1 - i][3*j+2] = static_cast<png_byte>(255.99*fb[pixel_index].z());
 		}
 	}
+
 	save_as_png(image_height, image_width, row_pointers, "../imageCPU.png");
 	for (int y = 0; y < image_height; y++)
 	{
@@ -189,16 +196,35 @@ void render(colour* fb, camera cam, const hitable_list& world, int blockX, int b
 {
 	for(int i = 0; i < blockSizeX; i++)
 	{
+		int pixelX = blockX*blockSizeX + i;
+		if(pixelX >= image_width)
+			continue;
+
 		for (int j = 0; j < blockSizeY; j++)
 		{
+			int pixelY = (blockY * blockSizeY) + j;
+			if(j >= image_height)
+				continue;
+
+			int pixelIndex = pixelX + pixelY*image_width;
+			if(fb[pixelIndex][0] != 0.0 || fb[pixelIndex][1] != 0.0 || fb[pixelIndex][2] != 0.0)
+				std::cerr << "Error: " << pixelX << "x" << pixelY << " pixel already filled!" << std::endl;
+
 			for (int s = 0; s < samples; s++)
 			{
-				auto u = FLOAT(j + random_float()) / (image_width - 1);
-				auto v = FLOAT(image_height - i + random_float()) / (image_height - 1);
+				auto u = FLOAT(pixelX + random_float()) / (image_width);
+				auto v = FLOAT(pixelY + random_float()) / (image_height);
 
 				ray r = cam.get_ray(u, v);
-				fb[i * image_height + j] += ray_colour(r, world, max_depth);
+				fb[pixelIndex] += ray_colour(r, world, max_depth);
 			}
+
+			auto scale = 1.0 / samples;
+			fb[pixelIndex][0] = sqrt(fb[pixelIndex].x() * scale);
+			fb[pixelIndex][1] = sqrt(fb[pixelIndex].y() * scale);
+			fb[pixelIndex][2] = sqrt(fb[pixelIndex].z() * scale);
+			//std::cerr << "Pixel: " << pixelX << "x" << pixelY << " done" << std::endl;
 		}
 	}
+	std::osyncstream(std::cerr) << "Block: " << blockX << "x" << blockY << " done" << std::endl;
 }

@@ -21,10 +21,10 @@ endif()
 message("CUDA support: " ${CUDA_COMPILE})
 if(CUDA_COMPILE)
     enable_language(CUDA)
-    set(CMAKE_CUDA_STANDARD 17)
+    set(CMAKE_CUDA_STANDARD 20)
     add_definitions(-DUSE_CUDA)
 else()
-    set(CMAKE_CXX_STANDARD 17)
+    set(CMAKE_CXX_STANDARD 20)
 endif()
 
 
@@ -54,11 +54,21 @@ if(CUDA_COMPILE)
     message(${CUDAToolkit_LIBRARY_DIR})
     set_source_files_properties(${SOURCE} PROPERTIES LANGUAGE CUDA)
     target_compile_options(${EXE} PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:
-            -gencode arch=compute_89,code=sm_89
+            -arch=sm_52
+            -gencode=arch=compute_52,code=sm_52
+            -gencode=arch=compute_60,code=sm_60
+            -gencode=arch=compute_61,code=sm_61
+            -gencode=arch=compute_70,code=sm_70
+            -gencode=arch=compute_75,code=sm_75
+            -gencode=arch=compute_80,code=sm_80
+            -gencode=arch=compute_86,code=sm_86
+            -gencode=arch=compute_87,code=sm_87
+            -gencode=arch=compute_89,code=sm_89
+            -gencode=arch=compute_89,code=compute_89
             -m64
             -Xptxas=-v
             -rdc=true
-            #--gpu-code=compute_80,sm_80,sm_89
+            #--gpu-code=compute_75,compute_80,sm_75,sm_80,sm_89
             >)
     set_property(TARGET ${EXE} PROPERTY CUDA_SEPARABLE_COMPILATION ON)
     set_property(TARGET ${EXE} PROPERTY CUDA_RESOLVE_DEVICE_SYMBOLS ON)

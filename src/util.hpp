@@ -5,9 +5,9 @@
 #include <limits>
 #include <memory>
 #include <random>
-#include <curand_kernel.h>
 
 #ifdef USE_CUDA
+#include <curand_kernel.h>
 #define FLOAT float
 #else
 #define FLOAT double
