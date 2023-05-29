@@ -1,7 +1,7 @@
 #include "world_gen.hpp"
 #include "material.hpp"
 #include "sphere.hpp"
-#include "constant_medium.h"
+#include "constant_medium.hpp"
 
 //create random scene
 hitable_list random_scene()
@@ -51,7 +51,7 @@ hitable_list random_scene()
 
     auto material4 = make_shared<isotropic>(colour(1, 1, 1));
     auto fogball = make_shared<sphere>(point3(6, 1, 0), 1.0, material4);
-    world.add(make_shared<constant_medium>(fogball, 1, colour(1, 1, 1)));
+    world.add(make_shared<constant_medium>(fogball, 0.7, colour(0.9, 0.9, 0.9)));
 
 	return world;
 }
