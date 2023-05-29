@@ -53,7 +53,7 @@ set(SOURCE
         src/ray.hpp src/png.hpp
         src/hitable.hpp src/sphere.hpp src/hitable_list.hpp
         src/camera.hpp src/material.cpp src/material.hpp src/util.cpp
-        src/gpu/gpu_render.cu src/gpu/gpu_render.hpp src/world_gen.cpp src/world_gen.hpp)
+        src/gpu/gpu_render.cu src/gpu/gpu_render.hpp src/world_gen.cpp src/world_gen.hpp src/constant_medium.cpp)
 
 if(CUDA_COMPILE)
     set(CUDA_SOURCE src/gpu/gpu_camera.cu src/gpu/gpu_camera.hpp
