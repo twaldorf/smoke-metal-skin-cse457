@@ -1,9 +1,10 @@
 #ifndef RTIOW1_SRC_CUDA_HPP_
 #define RTIOW1_SRC_CUDA_HPP_
 
-#ifdef USE_CUDA
 #include <curand_kernel.h>
-#include "camera.hpp"
+#include "gpu_camera.hpp"
+#include "gpu_hitable.hpp"
+#include "gpu_vec3.hpp"
 
 #define checkCudaErrors(val) check_cuda( (val), #val, __FILE__, __LINE__ )
 
@@ -13,7 +14,5 @@ __global__ void gpu_render_init(int max_x, int max_y, curandState *rand_state);
 __global__ void gpu_render(gpu_vec3 *fb, int image_width, int image_height, int samples_per_pixel, gpu_camera **cam, gpu_hitable **world, curandState *rand_state, int max_depth);
 __global__ void create_world(gpu_hitable **d_list, gpu_hitable **d_world, gpu_camera **d_camera, int nx, int ny, curandState *rand_state);
 __global__ void free_world(gpu_hitable **d_list, gpu_hitable **d_world, gpu_camera **d_camera);
-
-#endif
 
 #endif //RTIOW1_SRC_CUDA_HPP_

@@ -4,12 +4,30 @@ project(rtiow1 LANGUAGES CXX)
 set(CUDA_PATH /opt/cuda/bin)
 set(EXE rtiow1)
 
-
 # search for pkg-config
 include (FindPkgConfig)
 if(NOT PKG_CONFIG_FOUND)
     message (FATAL_ERROR "pkg-config not found")
 endif ()
+
+#find_package(Boost REQUIRED)
+#if (NOT Boost_FOUND)
+#    message(FATAL_ERROR "You don't seem to have boost development libraries installed")
+#else ()
+#    include_directories (${BOOST_INCLUDE_DIRS})
+#    link_directories (${BOOST_LIBRARY_DIRS})
+#    link_libraries (${BOOST_LIBRARIES})
+#endif ()
+
+# check for libpng
+pkg_check_modules (LIBPNG libpng16 REQUIRED)
+if(NOT LIBPNG_FOUND)
+    message(FATAL_ERROR "You don't seem to have libpng16 development libraries installed")
+else()
+    include_directories (${LIBPNG_INCLUDE_DIRS})
+    link_directories (${LIBPNG_LIBRARY_DIRS})
+    link_libraries (${LIBPNG_LIBRARIES})
+endif()
 
 find_package(CUDAToolkit QUIET)
 message("CUDA found: " ${CUDAToolkit_FOUND})
@@ -27,30 +45,26 @@ else()
     set(CMAKE_CXX_STANDARD 20)
 endif()
 
-
 set(SOURCE
-        main.cpp src/vec3.cpp src/colour.cpp
+        main.cpp src/vec3.cpp
         src/ray.cpp src/png.cpp
         src/sphere.cpp src/hitable_list.cpp
         src/camera.cpp src/util.hpp src/vec3.hpp
-        src/colour.hpp src/ray.hpp src/png.hpp
+        src/ray.hpp src/png.hpp
         src/hitable.hpp src/sphere.hpp src/hitable_list.hpp
         src/camera.hpp src/material.cpp src/material.hpp src/util.cpp
-        src/cuda.cu src/cuda.hpp src/world_gen.cpp src/world_gen.hpp)
-
-# check for libpng
-pkg_check_modules (LIBPNG libpng16 REQUIRED)
-if (NOT LIBPNG_FOUND)
-    message(FATAL_ERROR "You don't seem to have libpng16 development libraries installed")
-else ()
-    include_directories (${LIBPNG_INCLUDE_DIRS})
-    link_directories (${LIBPNG_LIBRARY_DIRS})
-    link_libraries (${LIBPNG_LIBRARIES})
-endif ()
-
-add_executable(${EXE} ${SOURCE})
+        src/gpu/cuda.cu src/gpu/cuda.hpp src/world_gen.cpp src/world_gen.hpp)
 
 if(CUDA_COMPILE)
+    list(APPEND SOURCE src/gpu/gpu_camera.cpp src/gpu/gpu_camera.hpp
+            src/gpu/cuda.cu src/gpu/cuda.hpp src/gpu/gpu_hitable.hpp
+            src/gpu/gpu_hitable_list.cpp src/gpu/gpu_hitable_list.hpp
+            src/gpu/gpu_material.cpp src/gpu/gpu_material.hpp
+            src/gpu/gpu_ray.cpp src/gpu/gpu_ray.hpp
+            src/gpu/gpu_sphere.cpp src/gpu/gpu_sphere.hpp
+            src/gpu/gpu_vec3.cpp src/gpu/gpu_vec3.hpp
+            src/gpu/gpu_util.cpp src/gpu/gpu_util.hpp)
+    add_executable(${EXE} ${SOURCE})
     message(${CUDAToolkit_LIBRARY_DIR})
     set_source_files_properties(${SOURCE} PROPERTIES LANGUAGE CUDA)
     target_compile_options(${EXE} PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:
@@ -74,5 +88,7 @@ if(CUDA_COMPILE)
     set_property(TARGET ${EXE} PROPERTY CUDA_RESOLVE_DEVICE_SYMBOLS ON)
     target_link_libraries(${EXE} ${LIBPNG_LINK_FLAGS} PRIVATE CUDA::cudart CUDA::cuda_driver)
 else()
+    add_executable(${EXE} ${SOURCE})
     target_link_libraries(${EXE} ${LIBPNG_LINK_FLAGS})
+    #${Boost_LIBRARIES}
 endif()

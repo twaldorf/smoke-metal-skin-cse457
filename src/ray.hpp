@@ -5,27 +5,6 @@
 
 //forward declaration to avoid circular dependencies
 class hitable;
-class gpu_hitable;
-
-#ifdef USE_CUDA
-#include <curand_kernel.h>
-
-class gpu_ray {
- public:
-	__device__ gpu_ray() = default;
-	__device__ gpu_ray(const gpu_vec3& origin, const gpu_vec3& direction) : gpu_orig(origin), gpu_dir(direction) {}
-	__device__ gpu_point3 origin() const { return gpu_orig; }
-	__device__ gpu_vec3 direction() const { return gpu_dir; }
-	__device__ gpu_point3 at(float t) const { return gpu_orig + t*gpu_dir; }
-
- public:
-	gpu_point3 gpu_orig;
-	gpu_vec3 gpu_dir;
-
-};
-
-__device__ gpu_colour gpu_ray_colour(const gpu_ray& r, gpu_hitable **world, curandState *rand_state, int max_depth);
-#endif
 
 class ray {
  public:

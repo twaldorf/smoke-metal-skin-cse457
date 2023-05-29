@@ -4,6 +4,9 @@
 #include <ctime>
 #include <cstring>
 #include <thread>
+//#include <boost/asio/post.hpp>
+//#include <boost/asio/thread_pool.hpp>
+//#include <boost/bind.hpp>
 
 #include "src/vec3.hpp"
 #include "src/ray.hpp"
@@ -18,16 +21,31 @@
 //CUDA only headers
 #ifdef USE_CUDA
 #include <curand_kernel.h>
-#include "src/cuda.hpp"
+#include "src/gpu/cuda.hpp"
+#include "src/gpu/gpu_camera.hpp"
+#include "src/gpu/gpu_hitable_list.hpp"
+#include "src/gpu/gpu_vec3.hpp"
 #endif
 
-void render(colour* fb, camera cam, const hitable_list& world, int blockX, int blockY, int blockSizeX, int blockSizeY, int image_height, int image_width, int samples, int max_depth);
+struct renderInfo
+{
+	camera cam;
+	const hitable_list& world;
+	int blockX;
+	int blockY;
+	int blockSize;
+	int image_height;
+	int image_width;
+	int samples;
+	int max_depth;
+};
+void render(colour* fb, renderInfo rInfo);
 
 int main(int argc, char **argv)
 {
 	//image
 	const FLOAT aspect_ratio = 16.0/9.0;
-	const int image_width = 400; //1920 or 400
+	const int image_width = 1280; //1920 or 400
 	const int image_height = static_cast<int>(image_width/aspect_ratio); //1080 or 225
 	const int samples_per_pixel = 50;
 	const int max_depth = 50;
@@ -50,7 +68,6 @@ int main(int argc, char **argv)
 		if(strcmp(argv[1], "--gpu") == 0)
 		{
 			std::cout << "Running on " << prop.name << std::endl;
-
 
 			int blockY = 8;
 			int blockX = 8;
@@ -148,18 +165,24 @@ int main(int argc, char **argv)
 
 	camera cam(lookfrom, lookat, vup, 20, aspect_ratio, aperture, dist_to_focus);
 
-	int blockSizeX = 32;
-	int blockSizeY = 32;
+	int blockSize = 32;
 	start = clock();
-	int xBlocks = image_width/blockSizeX;
-	int yBlocks = image_height/blockSizeY;
+	int xBlocks = image_width/blockSize;
+	int yBlocks = image_height/blockSize;
 	auto *threads = new std::thread[(xBlocks+1) * (yBlocks+1)];
+	//boost::asio::thread_pool thread_pool(cpuCount);
+
+	renderInfo rInfo = {cam, world, 0, 0, blockSize, image_height, image_width, samples_per_pixel, max_depth};
+
 	for (int i = 0; i < xBlocks+1; i++)
 	{
 		for (int j = 0; j < yBlocks+1; j++)
 		{
-			threads[(yBlocks+1)*i + j] = std::thread(render, fb, cam, world, i, j, blockSizeX, blockSizeY, image_height, image_width, samples_per_pixel, max_depth);
-			//render(fb, cam, world, i, j, blockSizeX, blockSizeY, image_height, image_width, samples_per_pixel, max_depth);
+			rInfo.blockX = i;
+			rInfo.blockY = j;
+			//boost::asio::post(thread_pool, [fb, capture0 = rInfo] { return render(fb, capture0); });
+			threads[(yBlocks+1)*i + j] = std::thread(render, fb, rInfo);
+			//render(fb, cam, rInfo);
 		}
 	}
 	for(int i = 0; i < (xBlocks+1) * (yBlocks+1); i++)
@@ -192,39 +215,39 @@ int main(int argc, char **argv)
 	return 0;
 }
 
-void render(colour* fb, camera cam, const hitable_list& world, int blockX, int blockY, int blockSizeX, int blockSizeY, int image_height, int image_width, int samples, int max_depth)
+void render(colour* fb, renderInfo rInfo)
 {
-	for(int i = 0; i < blockSizeX; i++)
+	for(int i = 0; i < rInfo.blockSize; i++)
 	{
-		int pixelX = blockX*blockSizeX + i;
-		if(pixelX >= image_width)
+		int pixelX = rInfo.blockX*rInfo.blockSize + i;
+		if(pixelX >= rInfo.image_width)
 			continue;
 
-		for (int j = 0; j < blockSizeY; j++)
+		for (int j = 0; j < rInfo.blockSize; j++)
 		{
-			int pixelY = (blockY * blockSizeY) + j;
-			if(j >= image_height)
+			int pixelY = (rInfo.blockY * rInfo.blockSize) + j;
+			if(j >= rInfo.image_height)
 				continue;
 
-			int pixelIndex = pixelX + pixelY*image_width;
+			int pixelIndex = pixelX + pixelY*rInfo.image_width;
 			if(fb[pixelIndex][0] != 0.0 || fb[pixelIndex][1] != 0.0 || fb[pixelIndex][2] != 0.0)
 				std::cerr << "Error: " << pixelX << "x" << pixelY << " pixel already filled!" << std::endl;
 
-			for (int s = 0; s < samples; s++)
+			for (int s = 0; s < rInfo.samples; s++)
 			{
-				auto u = FLOAT(pixelX + random_float()) / (image_width);
-				auto v = FLOAT(pixelY + random_float()) / (image_height);
+				auto u = FLOAT(pixelX + random_float()) / (rInfo.image_width);
+				auto v = FLOAT(pixelY + random_float()) / (rInfo.image_height);
 
-				ray r = cam.get_ray(u, v);
-				fb[pixelIndex] += ray_colour(r, world, max_depth);
+				ray r = rInfo.cam.get_ray(u, v);
+				fb[pixelIndex] += ray_colour(r, rInfo.world, rInfo.max_depth);
 			}
 
-			auto scale = 1.0 / samples;
+			auto scale = 1.0 / rInfo.samples;
 			fb[pixelIndex][0] = sqrt(fb[pixelIndex].x() * scale);
 			fb[pixelIndex][1] = sqrt(fb[pixelIndex].y() * scale);
 			fb[pixelIndex][2] = sqrt(fb[pixelIndex].z() * scale);
 			//std::cerr << "Pixel: " << pixelX << "x" << pixelY << " done" << std::endl;
 		}
 	}
-	std::osyncstream(std::cerr) << "Block: " << blockX << "x" << blockY << " done" << std::endl;
+	std::osyncstream(std::cerr) << "Block: " << rInfo.blockX << "x" << rInfo.blockY << " done" << std::endl;
 }
