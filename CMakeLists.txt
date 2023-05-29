@@ -63,7 +63,7 @@ if(CUDA_COMPILE)
             src/gpu/gpu_ray.cu src/gpu/gpu_ray.hpp
             src/gpu/gpu_sphere.cu src/gpu/gpu_sphere.hpp
             src/gpu/gpu_vec3.cu src/gpu/gpu_vec3.hpp
-            src/gpu/gpu_util.cu src/gpu/gpu_util.hpp src/constant_medium.cpp src/constant_medium.cpp)
+            src/gpu/gpu_util.cu src/gpu/gpu_util.hpp)
     add_executable(${EXE} ${SOURCE} ${CUDA_SOURCE})
     message(${CUDAToolkit_LIBRARY_DIR})
     set_source_files_properties(${CUDA_SOURCE} PROPERTIES LANGUAGE CUDA)
