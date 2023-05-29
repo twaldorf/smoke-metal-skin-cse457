@@ -1,10 +1,9 @@
-#ifdef USE_CUDA
 #include <cstdlib>
 #include <iostream>
 #include "cuda.hpp"
-#include "sphere.hpp"
-#include "material.hpp"
-#include "hitable_list.hpp"
+#include "gpu_sphere.hpp"
+#include "gpu_material.hpp"
+#include "gpu_hitable_list.hpp"
 
 void check_cuda(cudaError_t result, char const *const func, const char *const file, int const line)
 {
@@ -131,5 +130,3 @@ __global__ void free_world(gpu_hitable **d_list, gpu_hitable **d_world, gpu_came
 	delete *d_world;
 	delete *d_camera;
 }
-
-#endif
