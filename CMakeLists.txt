@@ -44,7 +44,6 @@ if(CUDA_COMPILE)
 endif()
 set(CMAKE_CXX_STANDARD 20)
 
-
 set(SOURCE
         main.cpp src/vec3.cpp
         src/ray.cpp src/png.cpp
@@ -53,17 +52,19 @@ set(SOURCE
         src/ray.hpp src/png.hpp
         src/hitable.hpp src/sphere.hpp src/hitable_list.hpp
         src/camera.hpp src/material.cpp src/material.hpp src/util.cpp
-        src/gpu/gpu_render.cu src/gpu/gpu_render.hpp src/world_gen.cpp src/world_gen.hpp src/constant_medium.cpp)
+        src/gpu/gpu_render.cu src/gpu/gpu_render.cuh src/world_gen.cpp
+        src/world_gen.hpp src/constant_medium.cpp)
 
 if(CUDA_COMPILE)
-    set(CUDA_SOURCE src/gpu/gpu_camera.cu src/gpu/gpu_camera.hpp
-            src/gpu/gpu_render.cu src/gpu/gpu_render.hpp src/gpu/gpu_hitable.hpp
-            src/gpu/gpu_hitable_list.cu src/gpu/gpu_hitable_list.hpp
-            src/gpu/gpu_material.cu src/gpu/gpu_material.hpp
-            src/gpu/gpu_ray.cu src/gpu/gpu_ray.hpp
-            src/gpu/gpu_sphere.cu src/gpu/gpu_sphere.hpp
-            src/gpu/gpu_vec3.cu src/gpu/gpu_vec3.hpp
-            src/gpu/gpu_util.cu src/gpu/gpu_util.hpp)
+    set(CUDA_SOURCE src/gpu/gpu_camera.cu src/gpu/gpu_camera.cuh
+            src/gpu/gpu_render.cu src/gpu/gpu_render.cuh src/gpu/gpu_hitable.cuh
+            src/gpu/gpu_hitable_list.cu src/gpu/gpu_hitable_list.cuh
+            src/gpu/gpu_material.cu src/gpu/gpu_material.cuh
+            src/gpu/gpu_ray.cu src/gpu/gpu_ray.cuh
+            src/gpu/gpu_sphere.cu src/gpu/gpu_sphere.cuh
+            src/gpu/gpu_vec3.cu src/gpu/gpu_vec3.cuh
+            src/gpu/gpu_util.cu src/gpu/gpu_util.cuh
+            src/gpu/gpu_constant_medium.cu src/gpu/gpu_constant_medium.cuh)
     add_executable(${EXE} ${SOURCE} ${CUDA_SOURCE})
     message(${CUDAToolkit_LIBRARY_DIR})
     set_source_files_properties(${CUDA_SOURCE} PROPERTIES LANGUAGE CUDA)

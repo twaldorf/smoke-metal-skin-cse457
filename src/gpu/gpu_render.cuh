@@ -2,9 +2,9 @@
 #define RTIOW1_SRC_CUDA_HPP_
 
 #include <curand_kernel.h>
-#include "gpu_camera.hpp"
-#include "gpu_hitable.hpp"
-#include "gpu_vec3.hpp"
+#include "gpu_camera.cuh"
+#include "gpu_hitable.cuh"
+#include "gpu_vec3.cuh"
 #include "../util.hpp"
 
 #define checkCudaErrors(val) check_cuda( (val), #val, __FILE__, __LINE__ )

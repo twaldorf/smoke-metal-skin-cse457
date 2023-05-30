@@ -1,5 +1,5 @@
-#ifndef RTIOW1_SRC_GPU_GPU_UTIL_HPP_
-#define RTIOW1_SRC_GPU_GPU_UTIL_HPP_
+#ifndef RTIOW1_SRC_GPU_GPU_UTIL_CUH_
+#define RTIOW1_SRC_GPU_GPU_UTIL_CUH_
 
 #include <cmath>
 #include <limits>
@@ -23,6 +23,9 @@ __device__ FLOAT gpu_random_float(curandState *rand_state);
 
 __device__ FLOAT gpu_random_float(FLOAT min, FLOAT max, curandState *rand_state);
 
+__device__ FLOAT gpu_random_float_0_1(curandState *rand_state);
+
+
 //class gpu_camera;
 //class gpu_hitable_list;
 //
@@ -39,4 +42,4 @@ __device__ FLOAT gpu_random_float(FLOAT min, FLOAT max, curandState *rand_state)
 //	int max_depth;
 //};
 
-#endif //RTIOW1_SRC_GPU_GPU_UTIL_HPP_
+#endif //RTIOW1_SRC_GPU_GPU_UTIL_CUH_

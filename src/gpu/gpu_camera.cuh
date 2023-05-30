@@ -1,9 +1,9 @@
-#ifndef RTIOW1_SRC_GPU_GPU_CAMERA_HPP_
-#define RTIOW1_SRC_GPU_GPU_CAMERA_HPP_
+#ifndef RTIOW1_SRC_GPU_GPU_CAMERA_CUH_
+#define RTIOW1_SRC_GPU_GPU_CAMERA_CUH_
 
-#include "gpu_vec3.hpp"
-#include "gpu_ray.hpp"
-#include "gpu_util.hpp"
+#include "gpu_vec3.cuh"
+#include "gpu_ray.cuh"
+#include "gpu_util.cuh"
 
 #include <curand_kernel.h>
 
@@ -30,4 +30,4 @@ class gpu_camera {
 
 };
 
-#endif //RTIOW1_SRC_GPU_GPU_CAMERA_HPP_
+#endif //RTIOW1_SRC_GPU_GPU_CAMERA_CUH_

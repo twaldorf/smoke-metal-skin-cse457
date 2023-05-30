@@ -1,10 +1,11 @@
 #include <cstdlib>
 #include <iostream>
-#include "gpu_render.hpp"
-#include "gpu_sphere.hpp"
-#include "gpu_material.hpp"
-#include "gpu_hitable_list.hpp"
+#include "gpu_render.cuh"
+#include "gpu_sphere.cuh"
+#include "gpu_material.cuh"
+#include "gpu_hitable_list.cuh"
 #include "../util.hpp"
+#include "gpu_constant_medium.cuh"
 
 void check_cuda(cudaError_t result, char const *const func, const char *const file, int const line)
 {
@@ -73,24 +74,24 @@ __global__ void create_world(gpu_hitable **d_list, gpu_hitable **d_world, gpu_ca
 	if (threadIdx.x == 0 && blockIdx.x == 0)
 	{
 		curandState local_rand_state = *rand_state;
-		d_list[0] = new gpu_sphere(gpu_vec3(0,-1000.0,-1), 1000,
-			new gpu_lambertian(gpu_vec3(0.5, 0.5, 0.5)));
+		d_list[0] = new gpu_sphere(gpu_point3(0,-1000.0,-1), 1000,
+			new gpu_lambertian(gpu_colour(0.5, 0.5, 0.5)));
 		int i = 1;
 		for(int a = -11; a < 11; a++)
 		{
 			for(int b = -11; b < 11; b++)
 			{
 				FLOAT choose_mat = curand_uniform(&local_rand_state);
-				gpu_vec3 center(a+curand_uniform(&local_rand_state), 0.2, b+curand_uniform(&local_rand_state));
+				gpu_point3 center(a+curand_uniform(&local_rand_state), 0.2, b+curand_uniform(&local_rand_state));
 				if(choose_mat < 0.8f)
 				{
 					d_list[i++] = new gpu_sphere(center, 0.2,
-						new gpu_lambertian(gpu_vec3(curand_uniform(&local_rand_state)*curand_uniform(&local_rand_state), curand_uniform(&local_rand_state)*curand_uniform(&local_rand_state), curand_uniform(&local_rand_state)*curand_uniform(&local_rand_state))));
+						new gpu_lambertian(gpu_colour(curand_uniform(&local_rand_state)*curand_uniform(&local_rand_state), curand_uniform(&local_rand_state)*curand_uniform(&local_rand_state), curand_uniform(&local_rand_state)*curand_uniform(&local_rand_state))));
 				}
 				else if(choose_mat < 0.95f)
 				{
 					d_list[i++] = new gpu_sphere(center, 0.2,
-						new gpu_metal(gpu_vec3(0.5f*(1.0f+curand_uniform(&local_rand_state)), 0.5f*(1.0f+curand_uniform(&local_rand_state)), 0.5f*(1.0f+curand_uniform(&local_rand_state))), 0.5f*curand_uniform(&local_rand_state)));
+						new gpu_metal(gpu_colour(0.5f*(1.0f+curand_uniform(&local_rand_state)), 0.5f*(1.0f+curand_uniform(&local_rand_state)), 0.5f*(1.0f+curand_uniform(&local_rand_state))), 0.5f*curand_uniform(&local_rand_state)));
 				}
 				else
 				{
@@ -98,14 +99,18 @@ __global__ void create_world(gpu_hitable **d_list, gpu_hitable **d_world, gpu_ca
 				}
 			}
 		}
-		d_list[i++] = new gpu_sphere(gpu_vec3(0, 1,0),  1.0,
+		d_list[i++] = new gpu_sphere(gpu_point3(0, 1,0),  1.0,
 			new gpu_dielectric(1.5));
-		d_list[i++] = new gpu_sphere(gpu_vec3(-4, 1, 0), 1.0,
-			new gpu_lambertian(gpu_vec3(0.4, 0.2, 0.1)));
-		d_list[i++] = new gpu_sphere(gpu_vec3(4, 1, 0),  1.0,
-			new gpu_metal(gpu_vec3(0.7, 0.6, 0.5), 0.0));
+		d_list[i++] = new gpu_sphere(gpu_point3(-4, 1, 0), 1.0,
+			new gpu_lambertian(gpu_colour(0.4, 0.2, 0.1)));
+		d_list[i++] = new gpu_sphere(gpu_point3(4, 1, 0),  1.0,
+			new gpu_metal(gpu_colour(0.7, 0.6, 0.5), 0.0));
+		auto fog =new gpu_sphere(gpu_point3(6, 1, 0), 1.0,
+			new gpu_isotropic(new gpu_colour(1, 1, 1)));
+		d_list[i++] = new gpu_constant_medium(fog, 0.7, new gpu_colour(0.9, 0.9, 0.9));
+
 		*rand_state = local_rand_state;
-		*d_world  = new gpu_hitable_list(d_list, 22*22+1+3);
+		*d_world  = new gpu_hitable_list(d_list, 22*22+1+4);
 
 		gpu_vec3 lookfrom(13,2,3);
 		gpu_vec3 lookat(0,0,0);
@@ -157,7 +162,7 @@ __host__ void start_gpu_render(gpu_colour *fb, screenInfo screen)
 	checkCudaErrors(cudaDeviceSynchronize());
 
 	gpu_hitable **d_list;
-	int num_hitables = 22*22+1+3;
+	int num_hitables = 22*22+1+4;
 	checkCudaErrors(cudaMalloc((void **)&d_list, num_hitables*sizeof(gpu_hitable *)));
 	gpu_hitable **d_world;
 	checkCudaErrors(cudaMalloc((void **)&d_world, sizeof(gpu_hitable *)));

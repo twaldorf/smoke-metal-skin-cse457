@@ -1,10 +1,10 @@
-#include "gpu_ray.hpp"
+#include "gpu_ray.cuh"
 
 #include <cfloat>
-#include "gpu_ray.hpp"
-#include "gpu_vec3.hpp"
-#include "gpu_hitable.hpp"
-#include "gpu_material.hpp"
+#include "gpu_ray.cuh"
+#include "gpu_vec3.cuh"
+#include "gpu_hitable.cuh"
+#include "gpu_material.cuh"
 
 __device__ gpu_colour gpu_ray_colour(const gpu_ray& r, gpu_hitable **world, curandState *rand_state, int depth)
 {
@@ -17,7 +17,7 @@ __device__ gpu_colour gpu_ray_colour(const gpu_ray& r, gpu_hitable **world, cura
 	{
 		gpu_hit_record rec;
 
-		if((*world)->hit(currentRay, 0.001f, FLT_MAX, rec))
+		if((*world)->hit(currentRay, 0.001f, FLT_MAX, rec, rand_state))
 		{
 			gpu_ray scattered;
 			gpu_colour attenuation;

@@ -19,8 +19,8 @@
 //CUDA only headers
 #ifdef USE_CUDA
 #include <curand_kernel.h>
-#include "src/gpu/gpu_render.hpp"
-#include "src/gpu/gpu_vec3.hpp"
+#include "src/gpu/gpu_render.cuh"
+#include "src/gpu/gpu_vec3.cuh"
 #endif
 
 struct renderInfo
@@ -38,7 +38,7 @@ int main(int argc, char **argv)
 {
 	//image
 	const FLOAT aspect_ratio = 16.0/9.0;
-	const int image_width = 400;
+	const int image_width = 1280;
 	screenInfo screen
 	{
 		//image_width
@@ -46,7 +46,7 @@ int main(int argc, char **argv)
 		//image_height
 		static_cast<int>(image_width/aspect_ratio), //1080 or 225
 		//samples
-		100,
+		500,
 		//max_depth for recursion
 		50
 	};

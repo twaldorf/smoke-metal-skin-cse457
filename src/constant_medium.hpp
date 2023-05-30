@@ -11,7 +11,7 @@ public:
         neg_inv_density(-1/d),
         phase_function(make_shared<isotropic>(c)) {};
 
-    virtual bool hit(const ray& r, FLOAT t_min, FLOAT t_max, hit_record& rec) const override;
+    bool hit(const ray& r, FLOAT t_min, FLOAT t_max, hit_record& rec) const override;
 
 //    virtual bool bounding_box(double time0, double time1, aabb&& output_box) const override;
 

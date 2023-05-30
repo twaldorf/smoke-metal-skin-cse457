@@ -1,17 +1,16 @@
-#ifndef RTIOW1_SRC_GPU_GPU_MATERIAL_HPP_
-#define RTIOW1_SRC_GPU_GPU_MATERIAL_HPP_
+#ifndef RTIOW1_SRC_GPU_GPU_MATERIAL_CUH_
+#define RTIOW1_SRC_GPU_GPU_MATERIAL_CUH_
 
-#include "gpu_util.hpp"
-#include "gpu_ray.hpp"
-#include "gpu_hitable.hpp"
-#include "gpu_vec3.hpp"
+#include "gpu_util.cuh"
+#include "gpu_ray.cuh"
+#include "gpu_hitable.cuh"
+#include "gpu_vec3.cuh"
 
 struct hit_record;
 struct gpu_hit_record;
 
 class gpu_ray;
 
-#ifdef USE_CUDA
 class gpu_material {
  public:
 	__device__ virtual bool scatter(
@@ -38,7 +37,7 @@ class gpu_metal : public gpu_material {
 
 class gpu_dielectric : public gpu_material {
  public:
-	__device__	explicit gpu_dielectric(FLOAT index_of_refraction) : ir(index_of_refraction) {}
+	__device__ explicit gpu_dielectric(FLOAT index_of_refraction) : ir(index_of_refraction) {}
 	__device__ bool scatter(const gpu_ray& r_in, const gpu_hit_record& rec, gpu_colour& attenuation, gpu_ray& scattered, curandState *rand_state) const override;
 
  public:
@@ -47,6 +46,15 @@ class gpu_dielectric : public gpu_material {
  private:
 	__device__ static FLOAT reflectance(FLOAT cosine, FLOAT ref_idx);
 };
-#endif
 
-#endif //RTIOW1_SRC_GPU_GPU_MATERIAL_HPP_
+class gpu_isotropic : public gpu_material {
+ public:
+	__device__ explicit gpu_isotropic(gpu_colour* c) : albedo(c) {}
+
+	__device__ bool scatter(const gpu_ray& r_in, const gpu_hit_record& rec, gpu_colour& attenuation, gpu_ray& scattered, curandState *rand_state) const override;
+
+ public:
+	gpu_colour* albedo;
+};
+
+#endif //RTIOW1_SRC_GPU_GPU_MATERIAL_CUH_
