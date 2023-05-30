@@ -10,14 +10,14 @@ if(NOT PKG_CONFIG_FOUND)
     message (FATAL_ERROR "pkg-config not found")
 endif ()
 
-#find_package(Boost REQUIRED)
-#if (NOT Boost_FOUND)
-#    message(FATAL_ERROR "You don't seem to have boost development libraries installed")
-#else ()
-#    include_directories (${BOOST_INCLUDE_DIRS})
-#    link_directories (${BOOST_LIBRARY_DIRS})
-#    link_libraries (${BOOST_LIBRARIES})
-#endif ()
+find_package(Boost REQUIRED)
+if (NOT Boost_FOUND)
+    message(FATAL_ERROR "You don't seem to have boost development libraries installed")
+else ()
+    include_directories (${BOOST_INCLUDE_DIRS})
+    link_directories (${BOOST_LIBRARY_DIRS})
+    link_libraries (${BOOST_LIBRARIES})
+endif ()
 
 # check for libpng
 pkg_check_modules (LIBPNG libpng16 REQUIRED)
@@ -41,9 +41,8 @@ if(CUDA_COMPILE)
     enable_language(CUDA)
     set(CMAKE_CUDA_STANDARD 20)
     add_definitions(-DUSE_CUDA)
-else()
-    set(CMAKE_CXX_STANDARD 20)
 endif()
+set(CMAKE_CXX_STANDARD 20)
 
 set(SOURCE
         main.cpp src/vec3.cpp
@@ -53,20 +52,22 @@ set(SOURCE
         src/ray.hpp src/png.hpp
         src/hitable.hpp src/sphere.hpp src/hitable_list.hpp
         src/camera.hpp src/material.cpp src/material.hpp src/util.cpp
-        src/gpu/cuda.cu src/gpu/cuda.hpp src/world_gen.cpp src/world_gen.hpp)
+        src/gpu/gpu_render.cu src/gpu/gpu_render.cuh src/world_gen.cpp
+        src/world_gen.hpp src/constant_medium.cpp)
 
 if(CUDA_COMPILE)
-    list(APPEND SOURCE src/gpu/gpu_camera.cpp src/gpu/gpu_camera.hpp
-            src/gpu/cuda.cu src/gpu/cuda.hpp src/gpu/gpu_hitable.hpp
-            src/gpu/gpu_hitable_list.cpp src/gpu/gpu_hitable_list.hpp
-            src/gpu/gpu_material.cpp src/gpu/gpu_material.hpp
-            src/gpu/gpu_ray.cpp src/gpu/gpu_ray.hpp
-            src/gpu/gpu_sphere.cpp src/gpu/gpu_sphere.hpp
-            src/gpu/gpu_vec3.cpp src/gpu/gpu_vec3.hpp
-            src/gpu/gpu_util.cpp src/gpu/gpu_util.hpp)
-    add_executable(${EXE} ${SOURCE})
+    set(CUDA_SOURCE src/gpu/gpu_camera.cu src/gpu/gpu_camera.cuh
+            src/gpu/gpu_render.cu src/gpu/gpu_render.cuh src/gpu/gpu_hitable.cuh
+            src/gpu/gpu_hitable_list.cu src/gpu/gpu_hitable_list.cuh
+            src/gpu/gpu_material.cu src/gpu/gpu_material.cuh
+            src/gpu/gpu_ray.cu src/gpu/gpu_ray.cuh
+            src/gpu/gpu_sphere.cu src/gpu/gpu_sphere.cuh
+            src/gpu/gpu_vec3.cu src/gpu/gpu_vec3.cuh
+            src/gpu/gpu_util.cu src/gpu/gpu_util.cuh
+            src/gpu/gpu_constant_medium.cu src/gpu/gpu_constant_medium.cuh)
+    add_executable(${EXE} ${SOURCE} ${CUDA_SOURCE})
     message(${CUDAToolkit_LIBRARY_DIR})
-    set_source_files_properties(${SOURCE} PROPERTIES LANGUAGE CUDA)
+    set_source_files_properties(${CUDA_SOURCE} PROPERTIES LANGUAGE CUDA)
     target_compile_options(${EXE} PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:
             -arch=sm_52
             -gencode=arch=compute_52,code=sm_52
@@ -86,9 +87,8 @@ if(CUDA_COMPILE)
             >)
     set_property(TARGET ${EXE} PROPERTY CUDA_SEPARABLE_COMPILATION ON)
     set_property(TARGET ${EXE} PROPERTY CUDA_RESOLVE_DEVICE_SYMBOLS ON)
-    target_link_libraries(${EXE} ${LIBPNG_LINK_FLAGS} PRIVATE CUDA::cudart CUDA::cuda_driver)
+    target_link_libraries(${EXE} ${LIBPNG_LINK_FLAGS} ${Boost_LIBRARIES} PRIVATE CUDA::cudart CUDA::cuda_driver)
 else()
     add_executable(${EXE} ${SOURCE})
-    target_link_libraries(${EXE} ${LIBPNG_LINK_FLAGS})
-    #${Boost_LIBRARIES}
+    target_link_libraries(${EXE} ${LIBPNG_LINK_FLAGS} ${Boost_LIBRARIES})
 endif()

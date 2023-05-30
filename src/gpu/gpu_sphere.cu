@@ -1,7 +1,7 @@
-#include "gpu_sphere.hpp"
-#include "gpu_ray.hpp"
+#include "gpu_sphere.cuh"
+#include "gpu_ray.cuh"
 
-__device__ bool gpu_sphere::hit(const gpu_ray& r, FLOAT t_min, FLOAT t_max, gpu_hit_record& rec) const
+__device__ bool gpu_sphere::hit(const gpu_ray& r, FLOAT t_min, FLOAT t_max, gpu_hit_record& rec, curandState* rand_state) const
 {
 	gpu_vec3 oc = r.origin() - center;
 	FLOAT a = gpu_dot(r.direction(), r.direction());

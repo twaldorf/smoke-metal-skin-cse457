@@ -1,4 +1,4 @@
-#include "gpu_camera.hpp"
+#include "gpu_camera.cuh"
 
 __device__ gpu_camera::gpu_camera(gpu_point3 lookfrom,
 	gpu_point3 lookat,

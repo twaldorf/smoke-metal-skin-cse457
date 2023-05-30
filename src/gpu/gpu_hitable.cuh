@@ -1,9 +1,9 @@
-#ifndef RTIOW1_SRC_GPU_GPU_HITABLE_HPP_
-#define RTIOW1_SRC_GPU_GPU_HITABLE_HPP_
+#ifndef RTIOW1_SRC_GPU_GPU_HITABLE_CUH_
+#define RTIOW1_SRC_GPU_GPU_HITABLE_CUH_
 
-#include "gpu_vec3.hpp"
-#include "gpu_ray.hpp"
-#include "gpu_material.hpp"
+#include "gpu_vec3.cuh"
+#include "gpu_ray.cuh"
+#include "gpu_material.cuh"
 
 class material;
 
@@ -33,7 +33,7 @@ struct gpu_hit_record {
 
 class gpu_hitable {
  public:
-	__device__ virtual bool hit(const gpu_ray& r, FLOAT t_min, FLOAT t_max, gpu_hit_record& rec) const = 0;
+	__device__ virtual bool hit(const gpu_ray& r, FLOAT t_min, FLOAT t_max, gpu_hit_record& rec, curandState* rand_state) const = 0;
 };
 
-#endif //RTIOW1_SRC_GPU_GPU_HITABLE_HPP_
+#endif //RTIOW1_SRC_GPU_GPU_HITABLE_CUH_

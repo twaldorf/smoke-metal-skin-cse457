@@ -1,4 +1,4 @@
-#include "gpu_material.hpp"
+#include "gpu_material.cuh"
 
 __device__ bool gpu_lambertian::scatter(const gpu_ray& r, const gpu_hit_record& rec, gpu_colour& attenuation, gpu_ray& scattered, curandState* rand_state) const
 {
@@ -47,4 +47,11 @@ __device__ FLOAT gpu_dielectric::reflectance(float cosine, float ref_idx)
 	FLOAT r0 = (1.0f-ref_idx) / (1.0f+ref_idx);
 	r0 *= r0;
 	return r0 + (1.0f-r0)*pow((1.0f-cosine), 5.0f);
+}
+
+__device__ bool gpu_isotropic::scatter(const gpu_ray& r_in, const gpu_hit_record& rec, gpu_colour& attenuation, gpu_ray& scattered, curandState *rand_state) const
+{
+	scattered = gpu_ray(rec.p, gpu_random_in_unit_sphere(rand_state));
+	attenuation = *albedo;
+	return true;
 }

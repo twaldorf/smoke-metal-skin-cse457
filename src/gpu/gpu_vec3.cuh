@@ -1,11 +1,11 @@
-#ifndef RTIOW1_SRC_GPU_GPU_VEC3_HPP_
-#define RTIOW1_SRC_GPU_GPU_VEC3_HPP_
+#ifndef RTIOW1_SRC_GPU_GPU_VEC3_CUH_
+#define RTIOW1_SRC_GPU_GPU_VEC3_CUH_
 
 #include <cmath>
 #include <iostream>
 #include <curand.h>
 #include <curand_kernel.h>
-#include "gpu_util.hpp"
+#include "gpu_util.cuh"
 
 using std::sqrt;
 
@@ -97,4 +97,4 @@ using gpu_point3 = gpu_vec3;   // 3D point
 using gpu_colour = gpu_vec3;
 
 
-#endif //RTIOW1_SRC_GPU_GPU_VEC3_HPP_
+#endif //RTIOW1_SRC_GPU_GPU_VEC3_CUH_

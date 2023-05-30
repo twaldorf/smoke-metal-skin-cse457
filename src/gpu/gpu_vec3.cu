@@ -1,4 +1,4 @@
-#include "gpu_vec3.hpp"
+#include "gpu_vec3.cuh"
 #include <curand_kernel.h>
 
 //various vector utility function

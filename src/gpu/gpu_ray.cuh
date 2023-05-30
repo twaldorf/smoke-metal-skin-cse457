@@ -1,7 +1,7 @@
-#ifndef RTIOW1_SRC_GPU_GPU_RAY_HPP_
-#define RTIOW1_SRC_GPU_GPU_RAY_HPP_
+#ifndef RTIOW1_SRC_GPU_GPU_RAY_CUH_
+#define RTIOW1_SRC_GPU_GPU_RAY_CUH_
 
-#include "gpu_vec3.hpp"
+#include "gpu_vec3.cuh"
 #include <curand_kernel.h>
 
 class gpu_ray {
@@ -21,4 +21,4 @@ class gpu_ray {
 class gpu_hitable;
 __device__ gpu_colour gpu_ray_colour(const gpu_ray& r, gpu_hitable **world, curandState *rand_state, int max_depth);
 
-#endif //RTIOW1_SRC_GPU_GPU_RAY_HPP_
+#endif //RTIOW1_SRC_GPU_GPU_RAY_CUH_
