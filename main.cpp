@@ -38,7 +38,7 @@ int main(int argc, char **argv)
 {
 	//image
 	const FLOAT aspect_ratio = 16.0/9.0;
-	const int image_width = 1280;
+	const int image_width = 400;
 	screenInfo screen
 	{
 		//image_width
@@ -46,7 +46,7 @@ int main(int argc, char **argv)
 		//image_height
 		static_cast<int>(image_width/aspect_ratio), //1080 or 225
 		//samples
-		500,
+		50,
 		//max_depth for recursion
 		50
 	};
