@@ -10,6 +10,7 @@
 
 class cube : public hitable {
 public:
+    // Cubes takes two points for opposing corners
     cube(point3& p0, point3& p1, shared_ptr<material> m);
 
     bool hit(const ray& r, FLOAT t_min, FLOAT t_max, hit_record& rec) const override;

@@ -6,6 +6,8 @@
 #include "yz_rect.hpp"
 #include "xz_rect.hpp"
 #include "cube.hpp"
+#include "translate.hpp"
+#include "rotate.hpp"
 
 //create random scene
 hitable_list random_scene()
@@ -44,7 +46,6 @@ hitable_list random_scene()
 		}
 	}
 
-    /*
 	auto material1 = make_shared<dielectric>(1.5);
 	world.add(make_shared<sphere>(point3(0, 1, 0), 1.0, material1));
 
@@ -56,19 +57,18 @@ hitable_list random_scene()
 
     auto material4 = make_shared<isotropic>(colour(1, 1, 1));
     auto fogball = make_shared<sphere>(point3(6, 1, 0), 1.0, material4);
-    world.add(make_shared<constant_medium>(fogball, 0.7, colour(0.9, 0.9, 0.9)));*/
+    world.add(make_shared<constant_medium>(fogball, 0.7, colour(0.9, 0.9, 0.9)));
 
     // Cube/rectangle testing
-    /*auto material5 = make_shared<lambertian>(colour(0.4, 0.2, 0.1));
-    world.add(make_shared<xy_rect>(-5, 5, 0, 1, 1, material5));
-    auto material6 = make_shared<lambertian>(colour(0.4, 0.2, 0.2));
-    world.add(make_shared<yz_rect>(0, 1, 0, 1, 5, material6));
-    auto material7 = make_shared<lambertian>(colour(0.4, 0.2, 0.3));
-    world.add(make_shared<xz_rect>(-5, 5, 0, 1, 1, material7));*/
-    auto material8 = make_shared<dielectric>(1.5);
-    point3 p0(-0.5, 0, -0.5);
-    point3 p1(0.5, 1, 0.5);
-    world.add(make_shared<cube>(p0, p1, material8));
+    auto material8 = make_shared<lambertian>(colour(0.2, 0.2, 0.4));
+    point3 p0(0, 0, 0);
+    point3 p1(1, 1, 1);
+
+    shared_ptr<hitable> cube1 = make_shared<cube>(p0, p1, material8);
+    cube1 = make_shared<translate>(cube1, vec3(-0.5, 0, -0.5)); // Translate to world origin
+    cube1 = make_shared<rotate_y>(cube1, 30);
+    cube1 = make_shared<translate>(cube1, vec3(1, 0.5, 2));
+    world.add(cube1);
 
     return world;
 }
