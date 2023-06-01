@@ -2,7 +2,6 @@
 #include "material.hpp"
 #include "sphere.hpp"
 #include "constant_medium.hpp"
-#include "tri.hpp"
 
 //create random scene
 hitable_list random_scene()
@@ -42,32 +41,17 @@ hitable_list random_scene()
 	}
 
 	auto material1 = make_shared<dielectric>(1.5);
-//
+	world.add(make_shared<sphere>(point3(0, 1, 0), 1.0, material1));
+
 	auto material2 = make_shared<lambertian>(colour(0.4, 0.2, 0.1));
-//	world.add(make_shared<sphere>(point3(-4, 1, 0), 1.0, material2));
-//
+	world.add(make_shared<sphere>(point3(-4, 1, 0), 1.0, material2));
+
 	auto material3 = make_shared<metal>(colour(0.7, 0.6, 0.5), 0.0);
-//	world.add(make_shared<sphere>(point3(4, 1, 0), 1.0, material3));
-//
+	world.add(make_shared<sphere>(point3(4, 1, 0), 1.0, material3));
+
     auto material4 = make_shared<isotropic>(colour(1, 1, 1));
-//    auto fogball = make_shared<sphere>(point3(6, 1, 0), 1.0, material4);
-//    world.add(make_shared<constant_medium>(fogball, 0.7, colour(0.9, 0.9, 0.9)));
-
-    point3 v1 = point3(0,0,4);
-    point3 v2 = point3(0,2,0);
-    point3 v3 = point3(-2,0,0);
-
-//    world.add(make_shared<sphere>(v1, -.1, material1));
-//    world.add(make_shared<sphere>(v2, -.1, material1));
-//    world.add(make_shared<sphere>(v3, -.1, material1));
-
-    auto triangle = make_shared<tri>(v1, v2, v3,
-         material1);
-    world.add(triangle);
-
-    auto triangle2 = make_shared<tri>(v3,v2, point3(4,0,4),
-                                     material1);
-    world.add(triangle2);
+    auto fogball = make_shared<sphere>(point3(6, 1, 0), 1.0, material4);
+    world.add(make_shared<constant_medium>(fogball, 0.7, colour(0.9, 0.9, 0.9)));
 
 	return world;
 }
