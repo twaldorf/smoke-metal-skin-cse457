@@ -7,24 +7,22 @@ bool tri::hit(const ray &r, FLOAT t_min, FLOAT t_max, hit_record &rec) const {
     }
 
     // get the distance to the triangle plane "along" the normal
-    FLOAT D = -dot(normal, vec3(0, 0, 0));
+    FLOAT d = -dot(normal, v1);
 
     // find the value of the parameter t in the parameterization Point = Origin + t * RayDirection
-    FLOAT t = -(dot(normal, r.origin()) + D) / dot(normal, r.direction());
+    FLOAT t = -(dot(normal, r.origin()) + d) / dot(normal, r.direction());
 
     // if the tri is behind the origin => NIO
     if (t < 0) {
         return false;
     }
 
-    // check distance boundaries
+    // check boundary
     if (t < t_min || t > t_max) {
         return false;
     }
 
     point3 p = r.origin() + t * r.direction();
-
-//    std::cout << v1 << " " << v2 << " " << v3 << std::endl;
 
     // inside-outside test
     // draw an edge between each vertex
@@ -49,7 +47,6 @@ bool tri::hit(const ray &r, FLOAT t_min, FLOAT t_max, hit_record &rec) const {
     }
 
     //return info about the intersection
-//    std::cout << "p: " << p << ", t: " << t << ", D: " << D << std::endl;
     rec.t = t;
     rec.p = p;
     rec.set_face_normal(r, normal);

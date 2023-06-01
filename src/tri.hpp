@@ -6,10 +6,11 @@
 #include "hitable.hpp"
 #include "vec3.hpp"
 
+// triangles defined CCW
 class tri : public hitable {
 public:
     tri(point3 v1, point3 v2, point3 v3, shared_ptr<material> m)
-        : normal(unit_vector(cross(v2 - v1, v3 - v2))),
+        : normal(unit_vector(cross(v2 - v1, v3 - v1))),
         v1(v1), v2(v2), v3(v3),
         mat_ptr(m) {};
 
