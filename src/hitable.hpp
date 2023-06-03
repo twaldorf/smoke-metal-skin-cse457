@@ -19,6 +19,10 @@ struct hit_record {
 	//flag to check if we are entering or exiting an object
 	bool front_face;
 
+    // texture u,v transform coordinates
+    FLOAT u;
+    FLOAT v;
+
 	//check if entering or exiting and object and flips the normal if we are exiting an object
 	inline void set_face_normal(const ray& r, const vec3& outward_normal)
 	{

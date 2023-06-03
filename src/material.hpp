@@ -5,6 +5,7 @@
 #include "ray.hpp"
 #include "hitable.hpp"
 #include "vec3.hpp"
+#include "texture.hpp"
 
 struct hit_record;
 
@@ -18,10 +19,11 @@ class material {
 
 class lambertian : public material {
  public:
-	explicit lambertian(const colour& a) : albedo(a) {}
+    lambertian(const colour& a) : albedo(make_shared<solid_colour>(a)) {}
+    lambertian(shared_ptr<texture> a) : albedo(a) {}
 	bool scatter(const ray& r_in, const hit_record& rec, colour& attenuation, ray& scattered) const override;
  public:
-	colour albedo;
+    shared_ptr<texture> albedo;
 };
 
 class metal : public material {
@@ -46,14 +48,14 @@ class dielectric : public material {
 
 class isotropic : public material {
 public:
-    explicit isotropic(colour c) : albedo(make_shared<colour>(c)) {}
+    isotropic(colour c) : albedo(make_shared<solid_colour>(c)) {}
+    isotropic(shared_ptr<texture> a) : albedo(a) {}
 
     virtual bool scatter(
             const ray& r_in, const hit_record& rec, colour& attenuation, ray& scattered
     ) const override;
 
-public:
-    shared_ptr<colour> albedo;
+    shared_ptr<texture> albedo;
 };
 
 #endif //RTIOW1_SRC_MATERIAL_HPP_

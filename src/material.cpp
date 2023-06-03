@@ -9,7 +9,7 @@ bool lambertian::scatter(const ray& r_in, const hit_record& rec, colour& attenua
 		scatter_direction = rec.normal;
 
 	scattered = ray(rec.p, scatter_direction);
-	attenuation = albedo;
+    attenuation = albedo->value(rec.u, rec.v, rec.p);
 	return true;
 }
 
@@ -63,6 +63,6 @@ FLOAT dielectric::reflectance(FLOAT cosine, FLOAT ref_idx)
 
 bool isotropic::scatter(const ray &r_in, const hit_record &rec, colour &attenuation, ray &scattered) const {
     scattered = ray(rec.p, random_in_unit_sphere());
-    attenuation = *albedo;
+    attenuation = albedo->value(rec.u, rec.v, rec.p);
     return true;
 }
