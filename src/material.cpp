@@ -9,7 +9,7 @@ bool lambertian::scatter(const ray& r_in, const hit_record& rec, colour& attenua
 		scatter_direction = rec.normal;
 
 	scattered = ray(rec.p, scatter_direction);
-	attenuation = albedo;
+    attenuation = albedo->value(rec.u, rec.v, rec.p);
 	return true;
 }
 

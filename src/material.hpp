@@ -19,10 +19,11 @@ class material {
 
 class lambertian : public material {
  public:
-	explicit lambertian(const colour& a) : albedo(a) {}
+    lambertian(const colour& a) : albedo(make_shared<solid_colour>(a)) {}
+    lambertian(shared_ptr<texture> a) : albedo(a) {}
 	bool scatter(const ray& r_in, const hit_record& rec, colour& attenuation, ray& scattered) const override;
  public:
-	colour albedo;
+    shared_ptr<texture> albedo;
 };
 
 class metal : public material {
