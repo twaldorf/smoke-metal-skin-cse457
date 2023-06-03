@@ -69,12 +69,12 @@ __global__ void gpu_render(gpu_vec3 *fb, int image_width, int image_height, int 
 	fb[pixel_index] = col;
 }
 
-__global__ void create_world(gpu_hitable **d_list, gpu_hitable **d_world, gpu_camera **d_camera, int nx, int ny, curandState *rand_state)
+__global__ void create_world(gpu_hitable **obj_list, gpu_hitable **world, gpu_camera **camera, int nx, int ny, curandState *rand_state)
 {
 	if (threadIdx.x == 0 && blockIdx.x == 0)
 	{
 		curandState local_rand_state = *rand_state;
-		d_list[0] = new gpu_sphere(gpu_point3(0,-1000.0,-1), 1000,
+		obj_list[0] = new gpu_sphere(gpu_point3(0,-1000.0,-1), 1000,
 			new gpu_lambertian(gpu_colour(0.5, 0.5, 0.5)));
 		int i = 1;
 		for(int a = -11; a < 11; a++)
@@ -85,38 +85,38 @@ __global__ void create_world(gpu_hitable **d_list, gpu_hitable **d_world, gpu_ca
 				gpu_point3 center(a+curand_uniform(&local_rand_state), 0.2, b+curand_uniform(&local_rand_state));
 				if(choose_mat < 0.8f)
 				{
-					d_list[i++] = new gpu_sphere(center, 0.2,
+					obj_list[i++] = new gpu_sphere(center, 0.2,
 						new gpu_lambertian(gpu_colour(curand_uniform(&local_rand_state)*curand_uniform(&local_rand_state), curand_uniform(&local_rand_state)*curand_uniform(&local_rand_state), curand_uniform(&local_rand_state)*curand_uniform(&local_rand_state))));
 				}
 				else if(choose_mat < 0.95f)
 				{
-					d_list[i++] = new gpu_sphere(center, 0.2,
+					obj_list[i++] = new gpu_sphere(center, 0.2,
 						new gpu_metal(gpu_colour(0.5f*(1.0f+curand_uniform(&local_rand_state)), 0.5f*(1.0f+curand_uniform(&local_rand_state)), 0.5f*(1.0f+curand_uniform(&local_rand_state))), 0.5f*curand_uniform(&local_rand_state)));
 				}
 				else
 				{
-					d_list[i++] = new gpu_sphere(center, 0.2, new gpu_dielectric(1.5));
+					obj_list[i++] = new gpu_sphere(center, 0.2, new gpu_dielectric(1.5));
 				}
 			}
 		}
-		d_list[i++] = new gpu_sphere(gpu_point3(0, 1,0),  1.0,
+		obj_list[i++] = new gpu_sphere(gpu_point3(0, 1,0),  1.0,
 			new gpu_dielectric(1.5));
-		d_list[i++] = new gpu_sphere(gpu_point3(-4, 1, 0), 1.0,
+		obj_list[i++] = new gpu_sphere(gpu_point3(-4, 1, 0), 1.0,
 			new gpu_lambertian(gpu_colour(0.4, 0.2, 0.1)));
-		d_list[i++] = new gpu_sphere(gpu_point3(4, 1, 0),  1.0,
+		obj_list[i++] = new gpu_sphere(gpu_point3(4, 1, 0),  1.0,
 			new gpu_metal(gpu_colour(0.7, 0.6, 0.5), 0.0));
 		auto fog =new gpu_sphere(gpu_point3(6, 1, 0), 1.0,
 			new gpu_isotropic(new gpu_colour(1, 1, 1)));
-		d_list[i++] = new gpu_constant_medium(fog, 0.7, new gpu_colour(0.9, 0.9, 0.9));
+		obj_list[i++] = new gpu_constant_medium(fog, 0.7, new gpu_colour(0.9, 0.9, 0.9));
 
 		*rand_state = local_rand_state;
-		*d_world  = new gpu_hitable_list(d_list, 22*22+1+4);
+		*world  = new gpu_hitable_list(obj_list, 22*22+1+4);
 
 		gpu_vec3 lookfrom(13,2,3);
 		gpu_vec3 lookat(0,0,0);
 		FLOAT dist_to_focus = 10.0; (lookfrom-lookat).length();
 		FLOAT aperture = 0.05;
-		*d_camera = new gpu_camera(lookfrom,
+		*camera = new gpu_camera(lookfrom,
 			lookat,
 			gpu_vec3(0,1,0),
 			20.0,
@@ -126,15 +126,15 @@ __global__ void create_world(gpu_hitable **d_list, gpu_hitable **d_world, gpu_ca
 	}
 }
 
-__global__ void free_world(gpu_hitable **d_list, gpu_hitable **d_world, gpu_camera **d_camera)
+__global__ void free_world(gpu_hitable **obj_list, gpu_hitable **world, gpu_camera **camera)
 {
 	for(int i=0; i < 22*22+1+3; i++)
 	{
-		delete ((gpu_sphere *)d_list[i])->mat_ptr;
-		delete d_list[i];
+		delete ((gpu_sphere *)obj_list[i])->mat_ptr;
+		delete obj_list[i];
 	}
-	delete *d_world;
-	delete *d_camera;
+	delete *world;
+	delete *camera;
 }
 
 __host__ void start_gpu_render(gpu_colour *fb, screenInfo screen)
@@ -152,23 +152,23 @@ __host__ void start_gpu_render(gpu_colour *fb, screenInfo screen)
 	int blockX = 8;
 
 	// allocate random state
-	curandState *d_rand_state;
-	checkCudaErrors(cudaMalloc((void **)&d_rand_state, screen.image_width*screen.image_height*sizeof(curandState)));
-	curandState *d_rand_state2;
-	checkCudaErrors(cudaMalloc((void **)&d_rand_state2, 1*sizeof(curandState)));
+	curandState *rand_state;
+	checkCudaErrors(cudaMalloc((void **)&rand_state, screen.image_width*screen.image_height*sizeof(curandState)));
+	curandState *rand_state2;
+	checkCudaErrors(cudaMalloc((void **)&rand_state2, 1*sizeof(curandState)));
 
-	rand_init<<<1,1>>>(d_rand_state2);
+	rand_init<<<1,1>>>(rand_state2);
 	checkCudaErrors(cudaGetLastError());
 	checkCudaErrors(cudaDeviceSynchronize());
 
-	gpu_hitable **d_list;
+	gpu_hitable **obj_list;
 	int num_hitables = 22*22+1+4;
-	checkCudaErrors(cudaMalloc((void **)&d_list, num_hitables*sizeof(gpu_hitable *)));
-	gpu_hitable **d_world;
-	checkCudaErrors(cudaMalloc((void **)&d_world, sizeof(gpu_hitable *)));
-	gpu_camera **d_camera;
-	checkCudaErrors(cudaMalloc((void **)&d_camera, sizeof(gpu_camera *)));
-	create_world<<<1,1>>>(d_list, d_world, d_camera, screen.image_width, screen.image_height, d_rand_state2);
+	checkCudaErrors(cudaMalloc((void **)&obj_list, num_hitables*sizeof(gpu_hitable *)));
+	gpu_hitable **world;
+	checkCudaErrors(cudaMalloc((void **)&world, sizeof(gpu_hitable *)));
+	gpu_camera **camera;
+	checkCudaErrors(cudaMalloc((void **)&camera, sizeof(gpu_camera *)));
+	create_world<<<1,1>>>(obj_list, world, camera, screen.image_width, screen.image_height, rand_state2);
 	checkCudaErrors(cudaGetLastError());
 	checkCudaErrors(cudaDeviceSynchronize());
 
@@ -176,21 +176,21 @@ __host__ void start_gpu_render(gpu_colour *fb, screenInfo screen)
 	// Render our buffer
 	dim3 blocks(screen.image_width/blockX+1, screen.image_height/blockY+1);
 	dim3 threads(blockX, blockY);
-	gpu_render_init<<<blocks, threads>>>(screen.image_width, screen.image_height, d_rand_state);
+	gpu_render_init<<<blocks, threads>>>(screen.image_width, screen.image_height, rand_state);
 	checkCudaErrors(cudaGetLastError());
 	checkCudaErrors(cudaDeviceSynchronize());
-	gpu_render<<<blocks, threads>>>(fb, screen.image_width, screen.image_height, screen.samples, d_camera, d_world, d_rand_state, screen.max_depth);
+	gpu_render<<<blocks, threads>>>(fb, screen.image_width, screen.image_height, screen.samples, camera, world, rand_state, screen.max_depth);
 	checkCudaErrors(cudaGetLastError());
 	checkCudaErrors(cudaDeviceSynchronize());
 	stop = clock();
 	timer_seconds = ((double)(stop - start)) / CLOCKS_PER_SEC;
 	std::cout << "took " << timer_seconds << " seconds with GPU.\n";
 
-	free_world<<<1,1>>>(d_list,d_world,d_camera);
+	free_world<<<1,1>>>(obj_list,world,camera);
 	checkCudaErrors(cudaGetLastError());
-	checkCudaErrors(cudaFree(d_camera));
-	checkCudaErrors(cudaFree(d_world));
-	checkCudaErrors(cudaFree(d_list));
-	checkCudaErrors(cudaFree(d_rand_state));
-	checkCudaErrors(cudaFree(d_rand_state2));
+	checkCudaErrors(cudaFree(camera));
+	checkCudaErrors(cudaFree(world));
+	checkCudaErrors(cudaFree(obj_list));
+	checkCudaErrors(cudaFree(rand_state));
+	checkCudaErrors(cudaFree(rand_state2));
 }

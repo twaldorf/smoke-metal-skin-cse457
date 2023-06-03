@@ -13,3 +13,23 @@ t is only unknown
 1 root of t -> hits but doesn't 'enter'
 2 roots of t -> enter and exit
 
+A functional ray tracing system is implemented by combining four components as described in the following steps:
+
+Create one or more acceleration structures over one or many geometry meshes and instances of these meshes in the scene.
+See “Acceleration structures”.
+
+Create a pipeline of programs that contains all programs that will be invoked during a ray tracing launch.
+See “Program pipeline creation”.
+
+Create a shader binding table that includes references to these programs and their parameters and choose a data layout
+that matches the implicit shader binding table record selection of the instances and geometries in the acceleration
+structures.
+See “Shader binding table”.
+
+Launch a device-side kernel that will invoke a ray generation program with a multitude of threads calling optixTrace
+to begin traversal and the execution of the other programs. See “Ray generation launches”. Device-side functionality
+is described in “Device-side functions”.
+
+Ray tracing work can be interleaved with other CUDA work to generate data, move data to and from the device, and move
+data to other graphics APIs. It is the application's responsibility to coordinate all work on the GPU. NVIDIA OptiX
+does not synchronize with any other work.
