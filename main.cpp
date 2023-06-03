@@ -66,7 +66,7 @@ int main(int argc, char **argv)
 		if(strcmp(argv[1], "--gpu") == 0)
 		{
 			int pixels = screen.image_height*screen.image_width;
-			size_t fb_size = pixels*sizeof(gpu_vec3);
+			size_t fb_size = pixels*sizeof(gpu_vec3f);
 
 			//framebuffer allocation
 			gpu_colour *fb;

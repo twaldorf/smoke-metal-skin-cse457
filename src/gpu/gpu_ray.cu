@@ -34,10 +34,10 @@ __device__ gpu_colour gpu_ray_colour(const gpu_ray& r, gpu_hitable **world, cura
 		}
 		else
 		{
-			gpu_vec3 unit_direction;
+			gpu_vec3f unit_direction;
 			unit_direction = gpu_unit_vector(currentRay.direction());
 			FLOAT t = 0.5f*(unit_direction.y() + 1.0f);
-			gpu_vec3 c = (1.0f-t)*gpu_colour(1.0f, 1.0f, 1.0f) + t*gpu_colour(0.5f, 0.7f, 1.0f);
+			gpu_vec3f c = (1.0f-t)*gpu_colour(1.0f, 1.0f, 1.0f) + t*gpu_colour(0.5f, 0.7f, 1.0f);
 			return currentAttenuation * c;
 		}
 	}

@@ -32,6 +32,13 @@ endif()
 find_package(CUDAToolkit QUIET)
 message("CUDA found: " ${CUDAToolkit_FOUND})
 if(CUDAToolkit_FOUND)
+    #change if different on local env
+    set(OptiX_INSTALL_DIR /opt/optix)
+    set(owl_dir ${PROJECT_SOURCE_DIR}/owl)
+    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${owl_dir}/owl/cmake/")
+    add_subdirectory(${owl_dir} EXCLUDE_FROM_ALL)
+    find_package(OptiX REQUIRED)
+    message("OPTIX found: " ${OptiX_FOUND})
     option(CUDA_COMPILE "CUDA Support" ON)
 else()
     option(CUDA_COMPILE "CUDA Support" OFF)
@@ -64,7 +71,9 @@ if(CUDA_COMPILE)
             src/gpu/gpu_sphere.cu src/gpu/gpu_sphere.cuh
             src/gpu/gpu_vec3.cu src/gpu/gpu_vec3.cuh
             src/gpu/gpu_util.cu src/gpu/gpu_util.cuh
-            src/gpu/gpu_constant_medium.cu src/gpu/gpu_constant_medium.cuh)
+            src/gpu/gpu_constant_medium.cu src/gpu/gpu_constant_medium.cuh src/gpu/optix/optix_util.cu
+            src/gpu/optix/optix_util.cuh src/gpu/optix/optix_materials.cu src/gpu/optix/optix_materials.cuh
+            src/gpu/optix/optix_geometry.cu src/gpu/optix/optix_geometry.cuh)
     add_executable(${EXE} ${SOURCE} ${CUDA_SOURCE})
     message(${CUDAToolkit_LIBRARY_DIR})
     set_source_files_properties(${CUDA_SOURCE} PROPERTIES LANGUAGE CUDA)
@@ -81,13 +90,13 @@ if(CUDA_COMPILE)
             -gencode=arch=compute_89,code=sm_89
             -gencode=arch=compute_89,code=compute_89
             -m64
-            -Xptxas=-v
+            #-Xptxas=-v
             -rdc=true
             #--gpu-code=compute_75,compute_80,sm_75,sm_80,sm_89
             >)
     set_property(TARGET ${EXE} PROPERTY CUDA_SEPARABLE_COMPILATION ON)
     set_property(TARGET ${EXE} PROPERTY CUDA_RESOLVE_DEVICE_SYMBOLS ON)
-    target_link_libraries(${EXE} ${LIBPNG_LINK_FLAGS} ${Boost_LIBRARIES} PRIVATE CUDA::cudart CUDA::cuda_driver)
+    target_link_libraries(${EXE} ${LIBPNG_LINK_FLAGS} ${Boost_LIBRARIES} PRIVATE OptiX::OptiX owl::owl CUDA::cudart CUDA::cuda_driver)
 else()
     add_executable(${EXE} ${SOURCE})
     target_link_libraries(${EXE} ${LIBPNG_LINK_FLAGS} ${Boost_LIBRARIES})

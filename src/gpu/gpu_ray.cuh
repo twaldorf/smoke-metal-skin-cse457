@@ -7,14 +7,14 @@
 class gpu_ray {
  public:
 	__device__ gpu_ray() = default;
-	__device__ gpu_ray(const gpu_vec3& origin, const gpu_vec3& direction) : gpu_orig(origin), gpu_dir(direction) {}
+	__device__ gpu_ray(const gpu_vec3f& origin, const gpu_vec3f& direction) : gpu_orig(origin), gpu_dir(direction) {}
 	__device__ gpu_point3 origin() const { return gpu_orig; }
-	__device__ gpu_vec3 direction() const { return gpu_dir; }
+	__device__ gpu_vec3f direction() const { return gpu_dir; }
 	__device__ gpu_point3 at(float t) const { return gpu_orig + t*gpu_dir; }
 
  public:
 	gpu_point3 gpu_orig;
-	gpu_vec3 gpu_dir;
+	gpu_vec3f gpu_dir;
 
 };
 

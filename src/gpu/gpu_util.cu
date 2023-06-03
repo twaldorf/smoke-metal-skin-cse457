@@ -19,9 +19,3 @@ __device__ FLOAT gpu_random_float(FLOAT min, FLOAT max, curandState *rand_state)
 	curandState local_rand_state = *rand_state;
 	return min + (max - min) * gpu_random_float(&local_rand_state);
 }
-
-__device__ FLOAT gpu_random_float_0_1(curandState *rand_state)
-{
-	curandState local_rand_state = *rand_state;
-	return curand_uniform(&local_rand_state);
-}

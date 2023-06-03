@@ -11,7 +11,7 @@ class gpu_camera {
  public:
 	__device__ gpu_camera(gpu_point3 lookfrom,
 		gpu_point3 lookat,
-		gpu_vec3 vup,
+		gpu_vec3f vup,
 		FLOAT vfov,
 		FLOAT aspect_ratio,
 		FLOAT aperture,
@@ -23,9 +23,9 @@ class gpu_camera {
  private:
 	gpu_point3 origin;
 	gpu_point3 lower_left_corner;
-	gpu_vec3 horizontal;
-	gpu_vec3 vertical;
-	gpu_vec3 u, v, w;
+	gpu_vec3f horizontal;
+	gpu_vec3f vertical;
+	gpu_vec3f u, v, w;
 	FLOAT lens_radius;
 
 };

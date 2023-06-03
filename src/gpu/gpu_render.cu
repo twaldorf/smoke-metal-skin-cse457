@@ -40,7 +40,7 @@ __global__ void gpu_render_init(int max_x, int max_y, curandState *rand_state)
 	curand_init(2023+pixel_index, 0, 0, &rand_state[pixel_index]);
 }
 
-__global__ void gpu_render(gpu_vec3 *fb, int image_width, int image_height, int samples_per_pixel, gpu_camera **cam, gpu_hitable **world, curandState *rand_state, int max_depth)
+__global__ void gpu_render(gpu_vec3f *fb, int image_width, int image_height, int samples_per_pixel, gpu_camera **cam, gpu_hitable **world, curandState *rand_state, int max_depth)
 {
 	int i = threadIdx.x + blockIdx.x * blockDim.x;
 	int j = threadIdx.y + blockIdx.y * blockDim.y;
@@ -112,13 +112,13 @@ __global__ void create_world(gpu_hitable **obj_list, gpu_hitable **world, gpu_ca
 		*rand_state = local_rand_state;
 		*world  = new gpu_hitable_list(obj_list, 22*22+1+4);
 
-		gpu_vec3 lookfrom(13,2,3);
-		gpu_vec3 lookat(0,0,0);
+		gpu_vec3f lookfrom(13,2,3);
+		gpu_vec3f lookat(0,0,0);
 		FLOAT dist_to_focus = 10.0; (lookfrom-lookat).length();
 		FLOAT aperture = 0.05;
 		*camera = new gpu_camera(lookfrom,
 			lookat,
-			gpu_vec3(0,1,0),
+			gpu_vec3f(0,1,0),
 			20.0,
 			FLOAT(nx)/FLOAT(ny),
 			aperture,
