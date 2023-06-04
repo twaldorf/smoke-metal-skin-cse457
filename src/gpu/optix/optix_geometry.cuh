@@ -14,7 +14,7 @@ struct Sphere {
 };
 
 // ==================================================================
-/* the three actual primitive types created by fusing material data
+/* the four actual primitive types created by fusing material data
    and geometry data */
 // ==================================================================
 
@@ -106,6 +106,7 @@ struct RayGenData
 {
 	uint32_t *fbPtr;
 	vec2i  fbSize;
+	uint32_t samples;
 	OptixTraversableHandle world;
 
 	struct {

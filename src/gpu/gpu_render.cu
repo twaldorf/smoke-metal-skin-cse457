@@ -184,7 +184,7 @@ __host__ void start_gpu_render(gpu_colour *fb, screenInfo screen)
 	checkCudaErrors(cudaDeviceSynchronize());
 	stop = clock();
 	timer_seconds = ((double)(stop - start)) / CLOCKS_PER_SEC;
-	std::cout << "took " << timer_seconds << " seconds with GPU.\n";
+	std::cout << "took " << timer_seconds << " seconds with GPU using CUDA.\n";
 
 	free_world<<<1,1>>>(obj_list,world,camera);
 	checkCudaErrors(cudaGetLastError());
