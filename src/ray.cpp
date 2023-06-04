@@ -18,13 +18,19 @@ colour ray_colour(const ray& r, const hitable& world, int depth)
 	{
 		ray scattered;
 		colour attenuation;
-		if(rec.mat_ptr->scatter(r, rec, attenuation, scattered))
-			return attenuation * ray_colour(scattered, world, depth-1);
-		return {0,0,0};
+        colour emitted = rec.mat_ptr->emitted(rec.u, rec.v, rec.p);
+
+        if (!rec.mat_ptr->scatter(r, rec, attenuation, scattered))
+            return emitted;
+
+        return emitted + attenuation * ray_colour(scattered, world, depth-1);
 	}
 
 	//sky
 	vec3 unit_direction = unit_vector(r.direction());
 	auto t = 0.5*(unit_direction.y() + 1.0);
 	return (1.0-t)*colour(1.0, 1.0, 1.0) + t*colour(0.5, 0.7, 1.0);
+
+    // void
+    return {0,0,0};
 }

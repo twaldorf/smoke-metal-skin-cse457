@@ -66,3 +66,7 @@ bool isotropic::scatter(const ray &r_in, const hit_record &rec, colour &attenuat
     attenuation = albedo->value(rec.u, rec.v, rec.p);
     return true;
 }
+
+colour diffuse_light::emitted(FLOAT u, FLOAT v, const point3 &p) const {
+    return emit->value(u, v, p);
+}

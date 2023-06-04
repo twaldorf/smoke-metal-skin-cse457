@@ -12,6 +12,9 @@ struct hit_record;
 //all materials must implement a scatter function
 class material {
  public:
+    virtual colour emitted(FLOAT u, FLOAT v, const point3& p) const {
+        return colour(0,0,0);
+    }
 	virtual bool scatter(
 		const ray& r_in, const hit_record& rec, colour& attenuation, ray& scattered
 		) const = 0;
@@ -56,6 +59,23 @@ public:
     ) const override;
 
     shared_ptr<texture> albedo;
+};
+
+class diffuse_light : public material  {
+public:
+    diffuse_light(shared_ptr<texture> a) : emit(a) {}
+    diffuse_light(colour c) : emit(make_shared<solid_colour>(c)) {}
+
+    virtual bool scatter(
+            const ray& r_in, const hit_record& rec, colour& attenuation, ray& scattered
+    ) const override {
+        return false;
+    }
+
+    virtual colour emitted(FLOAT u, FLOAT v, const point3& p) const override;
+
+public:
+    shared_ptr<texture> emit;
 };
 
 #endif //RTIOW1_SRC_MATERIAL_HPP_

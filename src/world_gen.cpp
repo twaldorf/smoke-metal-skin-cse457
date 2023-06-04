@@ -49,12 +49,9 @@ hitable_list random_scene()
 	auto material3 = make_shared<metal>(colour(0.7, 0.6, 0.5), 0.0);
 	world.add(make_shared<sphere>(point3(4, 1, 0), 1.0, material3));
 
-    auto material4 = make_shared<isotropic>(make_shared<checker_texture>(colour(0.2, 0.3, 0.1), colour(0.9, 0.9, 0.9)));
+    auto material4 = make_shared<isotropic>(colour(1, 1, 1));
     auto fogball = make_shared<sphere>(point3(6, 1, 0), 1.0, material4);
     world.add(make_shared<constant_medium>(fogball, 0.7, colour(0.9, 0.9, 0.9)));
-
-    auto checker = make_shared<checker_texture>(colour(0.2, 0.3, 0.1), colour(0.9, 0.9, 0.9));
-    world.add(make_shared<sphere>(point3(-8,1,0), 1, make_shared<lambertian>(checker)));
 
 	return world;
 }
