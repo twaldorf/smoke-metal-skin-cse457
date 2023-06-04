@@ -1,7 +1,10 @@
 #include "world_gen.hpp"
+
+#include <cmath>
 #include "material.hpp"
 #include "sphere.hpp"
 #include "constant_medium.hpp"
+#include "tri.hpp"
 
 //create random scene
 hitable_list random_scene()
@@ -54,4 +57,53 @@ hitable_list random_scene()
     world.add(make_shared<constant_medium>(fogball, 0.7, colour(0.9, 0.9, 0.9)));
 
 	return world;
+}
+
+point3 get_point(int i, FLOAT sf, FLOAT radius) {
+    vec3 center = {
+            static_cast<FLOAT>(-7 + 19 * sf),
+            static_cast<FLOAT>(1.2 + radius * cos(i)),
+            static_cast<FLOAT>(2.5 + radius * sin(i))
+    };
+    return center;
+}
+
+hitable_list spiral_scene() {
+    hitable_list world;
+    FLOAT population = 300.0;
+
+    shared_ptr<material> sphere_material;
+    for (int i = 0; i < population; i++) {
+
+        // sf = scale factor
+        FLOAT sf = static_cast<FLOAT>(i) / population;
+        FLOAT radius = .5 + sf * sf * pi / 4;
+        point3 center = get_point(i, sf, radius);
+
+        auto albedo = colour::random() * colour::random();
+        if (i % 24 == 0) {
+            sphere_material = make_shared<metal>(colour(0.7, 0.6, 0.5), 0.0);
+            auto tri1 = make_shared<tri>(
+                    center,
+                    get_point(i + 24 * pi, sf, radius - 1),
+                    get_point(i + 24 * pi, sf, radius + 1),
+                    sphere_material);
+            world.add(tri1);
+        }
+        if (i % 10 == 0) {
+            sphere_material = make_shared<diffuse_light>(albedo);
+        } else if (i % 8 == 0) {
+            sphere_material = make_shared<metal>(colour(0.7, 0.6, 0.5), 0.0);
+        } else if (i % 6 == 0) {
+            sphere_material = make_shared<dielectric>(1.5);
+        } else {
+            sphere_material = make_shared<lambertian>(albedo);
+        }
+        world.add(make_shared<sphere>(center, 0.2, sphere_material));
+    }
+
+    auto difflight2 = make_shared<diffuse_light>(colour(1,.25,.45));
+    world.add(make_shared<sphere>(point3(0, -10, 10), 10, difflight2));
+
+    return world;
 }

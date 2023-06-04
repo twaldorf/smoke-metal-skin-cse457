@@ -31,6 +31,6 @@ colour ray_colour(const ray& r, const hitable& world, int depth)
 	auto t = 0.5*(unit_direction.y() + 1.0);
 	return (1.0-t)*colour(1.0, 1.0, 1.0) + t*colour(0.5, 0.7, 1.0);
 
-    // void
-    return {0,0,0};
+    // void background, TODO: add feature flag to world object
+    // return {0,0,0};
 }
