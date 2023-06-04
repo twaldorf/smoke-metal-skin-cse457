@@ -124,10 +124,10 @@ OPTIX_CLOSEST_HIT_PROGRAM(DielectricBoxes)()
 	closestHitBoxes<DielectricBoxesGeom>();
 }
 
-OPTIX_CLOSEST_HIT_PROGRAM(IsotropicBoxes)()
-{
-	closestHitBoxes<IsotropicBoxesGeom>();
-}
+//OPTIX_CLOSEST_HIT_PROGRAM(IsotropicBoxes)()
+//{
+//	closestHitBoxes<IsotropicBoxesGeom>();
+//}
 
 
 // ==================================================================

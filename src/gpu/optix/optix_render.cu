@@ -1,3 +1,4 @@
+#include <cfloat>
 #include "optix_render.cuh"
 #include "optix_util.cuh"
 
@@ -16,11 +17,14 @@ __device__ void constantMediumSphereIntersectProg()
 {
 	const int primID = optixGetPrimitiveIndex();
 	const auto& self = owl::getProgramData<ConstantMediumGeomType>().prims[primID];
+	PerRayData& prd = owl::getPRD<PerRayData>();
 
 	const vec3f org = optixGetWorldRayOrigin();
 	const vec3f dir = optixGetWorldRayDirection();
-	float hit_t = optixGetRayTmax();
-	const float tmin = optixGetRayTmin();
+	float hit1_t = optixGetRayTmax();
+	float hit2_t = optixGetRayTmax();
+	const float tmax = FLT_MAX;
+	const float tmin = FLT_MIN;
 
 	const vec3f oc = org - self.constantMediumSphere.sphere.center;
 
@@ -29,25 +33,62 @@ __device__ void constantMediumSphereIntersectProg()
 	const float c = dot(oc, oc) - self.constantMediumSphere.sphere.radius * self.constantMediumSphere.sphere.radius;
 	const float discriminant = b * b - a * c;
 
-	if (discriminant < 0.f)
+	//	if (!boundary->hit(r, FLT_MIN, FLT_MAX, rec1, rand_state))
+	//		return;
+	if (discriminant < 0.0f)
 		return;
 
-	//locally scope following values
+	float temp;
+	temp = (-b + sqrtf(discriminant)) / a;
+	if (temp < tmax && temp > tmin)
+		hit1_t = temp;
+	else
 	{
-		float temp = (-b - sqrtf(discriminant)) / a;
-		if (temp < hit_t && temp > tmin)
-			hit_t = temp;
-	}
-	{
-		float temp = (-b + sqrtf(discriminant)) / a;
-		if (temp < hit_t && temp > tmin)
-			hit_t = temp;
+		temp = (-b - sqrtf(discriminant)) / a;
+		if (temp < tmax && temp > tmin)
+			hit1_t = temp;
+		else
+		{
+			printf("WTF\n");
+			return;
+		}
 	}
 
-	if (hit_t < optixGetRayTmax())
+//	if (!boundary->hit(r, rec1.t+0.0001f, FLT_MAX, rec2, rand_state))
+//		return false;
+	float temp_tmin = hit1_t+0.0001f;
+	temp = (-b + sqrtf(discriminant)) / a;
+	if (temp < tmax && temp > temp_tmin)
+		hit2_t = temp;
+	else
 	{
-		optixReportIntersection(hit_t, 0);
+		temp = (-b - sqrtf(discriminant)) / a;
+		if (temp < tmax && temp > temp_tmin)
+			hit2_t = temp;
+		else
+			return;
 	}
+
+	if (hit1_t < tmin)
+		hit1_t = tmin;
+	if (hit2_t > tmax)
+		hit2_t = tmax;
+
+	if (hit1_t >= hit2_t)
+		return;
+
+	if (hit1_t < 0)
+		hit1_t = 0;
+
+	const auto distance_inside_boundary = (hit2_t - hit1_t) * optixGetRayTmax();
+	const auto hit_distance = self.constantMediumSphere.neg_inv_density * log(prd.random());
+
+	if (hit_distance > distance_inside_boundary)
+		return;
+
+	hit1_t = hit1_t + hit_distance / optixGetRayTmax();;
+
+	optixReportIntersection(hit1_t, 0);
 }
 
 template<typename ConstantMediumGeomType>
@@ -178,7 +219,7 @@ __device__ vec3f missColor(const Ray &ray)
 __device__ vec3f tracePath(const RayGenData &self, owl::Ray &ray, PerRayData &prd)
 {
 	vec3f attenuation = 1.0f;
-
+	printf("WTF\n");
 	/* iterative version of recursion, up to depth 50 */
 	for (int depth = 0; depth < 50; depth++)
 	{
@@ -198,10 +239,10 @@ __device__ vec3f tracePath(const RayGenData &self, owl::Ray &ray, PerRayData &pr
 		{
 			// ray is still alive, and got properly bounced
 			attenuation *= prd.out.attenuation;
-			ray = owl::Ray(/* origin   : */ prd.out.scattered_origin,
-				/* direction: */ prd.out.scattered_direction,
-				/* tmin     : */ 1e-3f,
-				/* tmax     : */ 1e10f);
+			ray = owl::Ray(prd.out.scattered_origin, //origin
+							prd.out.scattered_direction, // direction:
+							1e-3f, //tmin
+							1e10f); //tmax
 		}
 	}
 	// recursion did not terminate - cancel it
