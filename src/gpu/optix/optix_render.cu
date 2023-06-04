@@ -1,6 +1,7 @@
 #include "optix_render.cuh"
 #include "optix_util.cuh"
 
+//SPHERES
 template<typename SphereGeomType>
 __device__ void boundsProg(const void *geomData, box3f &primBounds, const int primID)
 {
@@ -71,6 +72,7 @@ __device__ void closestHitSpheres()
 	prd.out.scatterEvent = scatter(self.material, hit_P,N, prd) ? rayGotBounced : rayGotCancelled;
 }
 
+//BOXES
 template<typename BoxesGeomType>
 __device__ void closestHitBoxes()
 {
