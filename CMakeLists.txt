@@ -66,7 +66,7 @@ set(SOURCE
         src/camera.hpp src/material.cpp src/material.hpp src/util.cpp
         src/gpu/gpu_render.cu src/gpu/gpu_render.cuh src/world_gen.cpp
         src/world_gen.hpp src/constant_medium.cpp src/tri.cpp src/tri.hpp
-        src/render.cpp src/render.hpp)
+        src/render.cpp src/render.hpp src/tri.cpp src/tri.hpp src/texture.cpp)
 set_source_files_properties(${SOURCE} PROPERTIES LANGUAGE CXX)
 
 if(CUDA_COMPILE)

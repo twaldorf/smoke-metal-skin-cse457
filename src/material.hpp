@@ -5,12 +5,16 @@
 #include "ray.hpp"
 #include "hitable.hpp"
 #include "vec3.hpp"
+#include "texture.hpp"
 
 struct hit_record;
 
 //all materials must implement a scatter function
 class material {
  public:
+    virtual colour emitted(FLOAT u, FLOAT v, const point3& p) const {
+        return colour(0,0,0);
+    }
 	virtual bool scatter(
 		const ray& r_in, const hit_record& rec, colour& attenuation, ray& scattered
 		) const = 0;
@@ -18,10 +22,11 @@ class material {
 
 class lambertian : public material {
  public:
-	explicit lambertian(const colour& a) : albedo(a) {}
+    lambertian(const colour& a) : albedo(make_shared<solid_colour>(a)) {}
+    lambertian(shared_ptr<texture> a) : albedo(a) {}
 	bool scatter(const ray& r_in, const hit_record& rec, colour& attenuation, ray& scattered) const override;
  public:
-	colour albedo;
+    shared_ptr<texture> albedo;
 };
 
 class metal : public material {
@@ -46,14 +51,31 @@ class dielectric : public material {
 
 class isotropic : public material {
 public:
-    explicit isotropic(colour c) : albedo(make_shared<colour>(c)) {}
+    isotropic(colour c) : albedo(make_shared<solid_colour>(c)) {}
+    isotropic(shared_ptr<texture> a) : albedo(a) {}
 
     virtual bool scatter(
             const ray& r_in, const hit_record& rec, colour& attenuation, ray& scattered
     ) const override;
 
+    shared_ptr<texture> albedo;
+};
+
+class diffuse_light : public material  {
 public:
-    shared_ptr<colour> albedo;
+    diffuse_light(shared_ptr<texture> a) : emit(a) {}
+    diffuse_light(colour c) : emit(make_shared<solid_colour>(c)) {}
+
+    virtual bool scatter(
+            const ray& r_in, const hit_record& rec, colour& attenuation, ray& scattered
+    ) const override {
+        return false;
+    }
+
+    virtual colour emitted(FLOAT u, FLOAT v, const point3& p) const override;
+
+public:
+    shared_ptr<texture> emit;
 };
 
 #endif //RTIOW1_SRC_MATERIAL_HPP_
