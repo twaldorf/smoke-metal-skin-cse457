@@ -32,7 +32,7 @@ struct LambertianSphere {
 };
 struct IsotropicSphere {
 	Sphere sphere;
-	Lambertian material;
+	Isotropic material;
 };
 
 // ==================================================================

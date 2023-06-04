@@ -2,6 +2,7 @@
 
 __device__ FLOAT gpu_degrees_to_radians(FLOAT degrees)
 {
+	const FLOAT gpu_pi = 3.14159265358979323846;
 	return degrees * gpu_pi / 180.0f;
 }
 

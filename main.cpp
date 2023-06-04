@@ -34,7 +34,7 @@ int main(int argc, char **argv)
 		//image_height
 		static_cast<int>(image_width/aspect_ratio), //1080 or 225
 		//samples
-		250,
+		1000,
 		//max_depth for recursion
 		50
 	};

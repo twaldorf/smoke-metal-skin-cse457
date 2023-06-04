@@ -34,13 +34,21 @@ struct laBoxes {
 	std::vector<Lambertian> materials;
 };
 
+struct isBoxes {
+	std::vector<vec3f> vertices;
+	std::vector<vec3i> indices;
+	std::vector<Isotropic> materials;
+};
+
 struct OptixWorld {
 	std::vector<DielectricSphere> dielectricSpheres;
 	std::vector<LambertianSphere> lambertianSpheres;
 	std::vector<MetalSphere>      metalSpheres;
+	std::vector<IsotropicSphere>  isotropicSpheres;
 	diBoxes dielectricBoxes;
 	meBoxes metalBoxes;
 	laBoxes lambertianBoxes;
+	isBoxes isotropicBoxes;
 };
 
 struct camInfo

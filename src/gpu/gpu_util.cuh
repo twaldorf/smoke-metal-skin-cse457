@@ -12,8 +12,6 @@ using std::shared_ptr;
 using std::make_shared;
 using std::sqrt;
 
-const FLOAT gpu_pi = 3.14159265358979323846;
-
 __device__ FLOAT gpu_degrees_to_radians(FLOAT degrees);
 
 __device__ FLOAT gpu_random_float(curandState *rand_state);

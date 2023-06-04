@@ -84,7 +84,7 @@ if(CUDA_COMPILE)
             src/gpu/gpu_vec3.cu src/gpu/gpu_vec3.cuh
             src/gpu/gpu_util.cu src/gpu/gpu_util.cuh
             src/gpu/gpu_constant_medium.cu src/gpu/gpu_constant_medium.cuh)
-    set(OPTIX_HOST src/gpu/optix/optix_host.cpp)
+    set(OPTIX_HOST src/gpu/optix/optix_host.cpp src/gpu/optix/tiny_obj_loader.hpp)
     set_source_files_properties(${ENTRY} ${OPTIX_HOST} PROPERTIES LANGUAGE CUDA)
     add_executable(${EXE} ${ENTRY} ${SOURCE} ${CUDA_SOURCE} ${OPTIX_HOST})
     message(${CUDAToolkit_LIBRARY_DIR})

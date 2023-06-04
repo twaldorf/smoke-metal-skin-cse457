@@ -6,8 +6,6 @@
 #include "optix_geometry.cuh"
 #include "optix_util.cuh"
 
-#define SAMPLES 1000
-
 using namespace owl;
 
 template<typename SphereGeomType>
@@ -95,6 +93,11 @@ OPTIX_CLOSEST_HIT_PROGRAM(DielectricSpheres)()
 	closestHitSpheres<DielectricSpheresGeom>();
 }
 
+OPTIX_CLOSEST_HIT_PROGRAM(IsotropicSpheres)()
+{
+	closestHitSpheres<IsotropicSpheresGeom>();
+}
+
 // ---------------------- boxes ----------------------
 OPTIX_CLOSEST_HIT_PROGRAM(MetalBoxes)()
 {
@@ -110,6 +113,12 @@ OPTIX_CLOSEST_HIT_PROGRAM(DielectricBoxes)()
 {
 	closestHitBoxes<DielectricBoxesGeom>();
 }
+
+OPTIX_CLOSEST_HIT_PROGRAM(IsotropicBoxes)()
+{
+	closestHitBoxes<IsotropicBoxesGeom>();
+}
+
 
 // ==================================================================
 // miss and raygen
@@ -136,7 +145,7 @@ OPTIX_RAYGEN_PROGRAM(rayGen)()
 	prd.random.init(pixelID.x, pixelID.y);
 
 	vec3f color = 0.f;
-	for (int sampleID=0; sampleID < SAMPLES; sampleID++)
+	for (int sampleID=0; sampleID < self.samples; sampleID++)
 	{
 		owl::Ray ray;
 
@@ -154,7 +163,7 @@ OPTIX_RAYGEN_PROGRAM(rayGen)()
 		color += tracePath(self, ray, prd);
 	}
 
-	self.fbPtr[pixelIdx] = owl::make_rgba(color * (1.f / SAMPLES));
+	self.fbPtr[pixelIdx] = owl::make_rgba(color * (1.0f / self.samples));
 }
 
 #endif //RTIOW1_SRC_GPU_OPTIX_OPTIX_RENDER_CUH_
