@@ -54,6 +54,7 @@ if(CUDA_COMPILE)
 endif()
 set(CMAKE_CXX_STANDARD 20)
 
+#we want to compile this as CUDA if
 set(ENTRY main.cpp)
 set(SOURCE
         src/vec3.cpp
@@ -64,7 +65,8 @@ set(SOURCE
         src/hitable.hpp src/sphere.hpp src/hitable_list.hpp
         src/camera.hpp src/material.cpp src/material.hpp src/util.cpp
         src/gpu/gpu_render.cu src/gpu/gpu_render.cuh src/world_gen.cpp
-        src/world_gen.hpp src/constant_medium.cpp src/tri.cpp src/tri.hpp src/render.cpp src/render.hpp)
+        src/world_gen.hpp src/constant_medium.cpp src/tri.cpp src/tri.hpp
+        src/render.cpp src/render.hpp)
 set_source_files_properties(${SOURCE} PROPERTIES LANGUAGE CXX)
 
 if(CUDA_COMPILE)

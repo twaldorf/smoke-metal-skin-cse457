@@ -6,7 +6,7 @@
 #include "optix_geometry.cuh"
 #include "optix_util.cuh"
 
-#define SAMPLES 256
+#define SAMPLES 1000
 
 using namespace owl;
 

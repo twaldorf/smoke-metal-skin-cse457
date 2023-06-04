@@ -4,10 +4,7 @@
 #include "optix_host.hpp"
 
 template<typename BoxArray, typename Material>
-void addRandomBox(BoxArray& boxes,
-	const vec3f& center,
-	const float size,
-	const Material& material)
+void addRandomBox(BoxArray& boxes, const vec3f& center, const float size, const Material& material)
 {
 	const int NUM_VERTICES = 8;
 	static const vec3f unitBoxVertices[NUM_VERTICES] =
