@@ -13,6 +13,11 @@ struct Sphere {
 	float radius;
 };
 
+struct constantMediumSphere {
+	Sphere sphere;
+	float neg_inv_density;
+};
+
 // ==================================================================
 /* the four actual primitive types created by fusing material data
    and geometry data */
@@ -31,7 +36,7 @@ struct LambertianSphere {
 	Lambertian material;
 };
 struct IsotropicSphere {
-	Sphere sphere;
+	constantMediumSphere constantMediumSphere;
 	Isotropic material;
 };
 

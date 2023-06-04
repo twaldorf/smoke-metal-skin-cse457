@@ -9,26 +9,29 @@
 using namespace owl;
 
 template<typename SphereGeomType>
-__device__ void boundsProg(const void *geomData, box3f &primBounds, const int primID);
+__device__ void sphereBoundsProg(const void *geomData, box3f &primBounds, const int primID);
+
+template<typename ConstantMediumGeomType>
+__device__ void constantMediumSphereBoundsProg(const void* geomData, box3f& primBounds, const int primID);
 
 OPTIX_BOUNDS_PROGRAM(MetalSpheres)(const void *geomData, box3f &primBounds, const int primID)
 {
-	boundsProg<MetalSpheresGeom>(geomData,primBounds,primID);
+	sphereBoundsProg<MetalSpheresGeom>(geomData,primBounds,primID);
 }
 
 OPTIX_BOUNDS_PROGRAM(LambertianSpheres)(const void *geomData, box3f &primBounds, const int primID)
 {
-	boundsProg<LambertianSpheresGeom>(geomData,primBounds,primID);
+	sphereBoundsProg<LambertianSpheresGeom>(geomData,primBounds,primID);
 }
 
 OPTIX_BOUNDS_PROGRAM(DielectricSpheres)(const void *geomData, box3f &primBounds, const int primID)
 {
-	boundsProg<DielectricSpheresGeom>(geomData,primBounds,primID);
+	sphereBoundsProg<DielectricSpheresGeom>(geomData,primBounds,primID);
 }
 
 OPTIX_BOUNDS_PROGRAM(IsotropicSpheres)(const void *geomData, box3f &primBounds, const int primID)
 {
-	boundsProg<IsotropicSpheresGeom>(geomData,primBounds,primID);
+	constantMediumSphereBoundsProg<IsotropicSpheresGeom>(geomData,primBounds,primID);
 }
 
 
@@ -38,26 +41,29 @@ OPTIX_BOUNDS_PROGRAM(IsotropicSpheres)(const void *geomData, box3f &primBounds, 
 // ==================================================================
 
 template<typename SpheresGeomType>
-__device__ void intersectProg();
+__device__ void sphereIntersectProg();
+
+template<typename ConstantMediumGeomType>
+__device__ void constantMediumSphereIntersectProg();
 
 OPTIX_INTERSECT_PROGRAM(MetalSpheres)()
 {
-	intersectProg<MetalSpheresGeom>();
+	sphereIntersectProg<MetalSpheresGeom>();
 }
 
 OPTIX_INTERSECT_PROGRAM(LambertianSpheres)()
 {
-	intersectProg<LambertianSpheresGeom>();
+	sphereIntersectProg<LambertianSpheresGeom>();
 }
 
 OPTIX_INTERSECT_PROGRAM(DielectricSpheres)()
 {
-	intersectProg<DielectricSpheresGeom>();
+	sphereIntersectProg<DielectricSpheresGeom>();
 }
 
 OPTIX_INTERSECT_PROGRAM(IsotropicSpheres)()
 {
-	intersectProg<IsotropicSpheresGeom>();
+	constantMediumSphereIntersectProg<IsotropicSpheresGeom>();
 }
 
 // ==================================================================
@@ -68,6 +74,10 @@ OPTIX_INTERSECT_PROGRAM(IsotropicSpheres)()
 // ----------- sphere+material -----------
 template<typename SpheresGeomType>
 __device__ void closestHitSpheres();
+
+// ----------- constant medium+sphere+material -----------
+template<typename ConstantMediumGeomType>
+__device__ void closestHitConstantMediumSphere();
 
 // ----------- "box+material" -----------
 template<typename BoxesGeomType>
@@ -95,7 +105,7 @@ OPTIX_CLOSEST_HIT_PROGRAM(DielectricSpheres)()
 
 OPTIX_CLOSEST_HIT_PROGRAM(IsotropicSpheres)()
 {
-	closestHitSpheres<IsotropicSpheresGeom>();
+	closestHitConstantMediumSphere<IsotropicSpheresGeom>();
 }
 
 // ---------------------- boxes ----------------------
