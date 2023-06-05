@@ -17,6 +17,7 @@ void cpuRender(colour* fb, screenInfo screen, FLOAT aspect_ratio)
 	std::cout << "Running on " << cpuCount << " threads." << std::endl;
 
 	auto world = random_scene();
+	//auto world = spiral_scene();
 
 	//camera
 	point3 lookfrom(13, 2, 3);

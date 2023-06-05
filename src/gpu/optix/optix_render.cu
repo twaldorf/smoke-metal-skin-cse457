@@ -52,7 +52,7 @@ __device__ void constantMediumSphereIntersectProg()
 			hit1_t = root;
 		else
 		{
-			//return;
+			return;
 		}
 	}
 

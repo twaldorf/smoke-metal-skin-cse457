@@ -77,7 +77,7 @@ hitable_list spiral_scene() {
 
         // sf = scale factor
         FLOAT sf = static_cast<FLOAT>(i) / population;
-        FLOAT radius = .5 + sf * sf * pi / 4;
+        FLOAT radius = 0.5f + sf * sf * pi / 4;
         point3 center = get_point(i, sf, radius);
 
         auto albedo = colour::random() * colour::random();
@@ -102,7 +102,7 @@ hitable_list spiral_scene() {
         world.add(make_shared<sphere>(center, 0.2, sphere_material));
     }
 
-    auto difflight2 = make_shared<diffuse_light>(colour(1,.25,.45));
+    auto difflight2 = make_shared<diffuse_light>(colour(1.0f,0.25f,0.45f));
     world.add(make_shared<sphere>(point3(0, -10, 10), 10, difflight2));
 
     return world;
