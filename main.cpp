@@ -11,6 +11,7 @@
 #include "src/util.hpp"
 #include "src/camera.hpp"
 #include "src/world_gen.hpp"
+#include "src/render.hpp"
 
 //CUDA only headers
 #ifdef USE_CUDA
@@ -18,7 +19,6 @@
 #include "src/gpu/gpu_render.cuh"
 #include "src/gpu/gpu_vec3.cuh"
 #include "src/gpu/optix/optix_host.hpp"
-#include "src/render.hpp"
 #endif
 
 
