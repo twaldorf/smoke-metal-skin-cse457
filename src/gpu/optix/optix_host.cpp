@@ -108,13 +108,13 @@ void createScene(OptixWorld* world)
 			}
 		}
 	}
-	world->dielectricSpheres.push_back({ Sphere{ vec3f(0.0f, 1.0f, 0.0f), 1.0f },
+	world->dielectricSpheres.push_back({ Sphere{ vec3f(-7.0f, 1.0f, 0.0f), 1.0f },
 										 Dielectric{ 1.5f }});
-	world->lambertianSpheres.push_back({ Sphere{ vec3f(-4.0f, 1.0f, 0.0f), 1.0f },
-										 Lambertian{ vec3f(0.4f, 0.2f, 0.1f) }});
-	world->metalSpheres.push_back({ Sphere{ vec3f(4.0f, 1.0f, 0.0f), 1.0f },
+	world->lambertianSpheres.push_back({ Sphere{ vec3f(5.0f, 1.0f, 0.0f), 1.0f },
+										 Lambertian{ vec3f(1.0f, 1.0f, 1.0f) }});
+	world->metalSpheres.push_back({ Sphere{ vec3f(1.0f, 1.0f, 0.0f), 1.0f },
 									Metal{ vec3f(0.7f, 0.6f, 0.5f), 0.0f }});
-	world->isotropicSpheres.push_back({ {Sphere{ vec3f(6.0f, 1.0f, 0.0f), 1.0}, 5.9f },
+	world->isotropicSpheres.push_back({ {Sphere{ vec3f(-3.0f, 1.0f, 0.0f), 1.0f}, 2.0f },
 										Isotropic{ vec3f(1.0f, 1.0f, 1.0f) }});
 }
 

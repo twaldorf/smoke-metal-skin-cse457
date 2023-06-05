@@ -1,5 +1,5 @@
 #include <cfloat>
-#include <stdio.h>
+#include <cstdio>
 #include "optix_render.cuh"
 #include "optix_util.cuh"
 
@@ -20,8 +20,8 @@ __device__ void constantMediumSphereIntersectProg()
 	const auto& self = owl::getProgramData<ConstantMediumGeomType>().prims[primID];
 	PerRayData& prd = owl::getPRD<PerRayData>();
 
-	const vec3f org = optixGetWorldRayOrigin();
-	const vec3f dir = optixGetWorldRayDirection();
+	const vec3f org = optixGetObjectRayOrigin();
+	const vec3f dir = optixGetObjectRayDirection();
 	float hit1_t = optixGetRayTmax();
 	float hit2_t = optixGetRayTmax();
 	const float tmax = optixGetRayTmax();
@@ -45,34 +45,26 @@ __device__ void constantMediumSphereIntersectProg()
 	root = (-b + sqrtf(discriminant)) / a;
 	if (root < tmax && root > tmin)
 		hit1_t = root;
-	else
-	{
-		root = (-b - sqrtf(discriminant)) / a;
-		if (root < tmax && root > tmin)
-			hit1_t = root;
-		else
-		{
-			return;
-		}
-	}
+	root = (-b - sqrtf(discriminant)) / a;
+	if (root < tmax && root > tmin && root < hit1_t)
+		hit1_t = root;
+	else if(hit1_t == optixGetRayTmax())
+		return;
+
 
 //	if (!boundary->hit(r, rec1.t+0.0001f, FLT_MAX, rec2, rand_state))
 //		return false;
 	float temp_tmin = hit1_t+0.0001f;
 	root = (-b + sqrtf(discriminant)) / a;
 	if (root < tmax && root > temp_tmin)
-	{
 		hit2_t = root;
-	}
 	else
 	{
 		root = (-b - sqrtf(discriminant)) / a;
 		if (root < tmax && root > temp_tmin)
 			hit2_t = root;
 		else
-		{
-			//return;
-		}
+			return;
 	}
 
 	if (hit1_t < tmin)

@@ -62,8 +62,8 @@ struct camInfo
 
 inline float rnd()
 {
-	static std::mt19937 gen(0); //Standard mersenne_twister_engine seeded with rd()
-	static std::uniform_real_distribution<float> dis(0.f, 1.f);
+	static std::mt19937 gen(3); //Standard mersenne_twister_engine seeded with rd()
+	static std::uniform_real_distribution<float> dis(0.0f, 1.0f);
 	return dis(gen);
 }
 

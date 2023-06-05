@@ -88,6 +88,13 @@ inline __device__ vec3f randomPointInUnitSphere(Random &rnd)
 
 inline __device__ bool scatter(const Lambertian &lambertian, const vec3f &P, vec3f N, PerRayData &prd)
 {
+	vec3i ld = optixGetLaunchDimensions();
+	vec3i li = optixGetLaunchIndex();
+
+	vec3i center = vec3i(ld.x/2, ld.y/2, ld.z/2);
+	if(li == center)
+		printf("Coordinates: %d %d\n", li.x, li.y);
+
 	const vec3f org = optixGetWorldRayOrigin();
 	const vec3f dir = optixGetWorldRayDirection();
 

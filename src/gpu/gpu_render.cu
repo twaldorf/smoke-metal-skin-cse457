@@ -102,7 +102,7 @@ __global__ void create_world(gpu_hitable **obj_list, gpu_hitable **world, gpu_ca
 		obj_list[i++] = new gpu_sphere(gpu_point3(0, 1,0),  1.0,
 			new gpu_dielectric(1.5));
 		obj_list[i++] = new gpu_sphere(gpu_point3(-4, 1, 0), 1.0,
-			new gpu_lambertian(gpu_colour(0.4, 0.2, 0.1)));
+			new gpu_lambertian(gpu_colour(1.0f, 1.0f, 1.0f)));
 		obj_list[i++] = new gpu_sphere(gpu_point3(4, 1, 0),  1.0,
 			new gpu_metal(gpu_colour(0.7, 0.6, 0.5), 0.0));
 		auto fog =new gpu_sphere(gpu_point3(6, 1, 0), 1.0,

@@ -146,6 +146,13 @@ __device__ vec3f tracePath(const RayGenData &self, owl::Ray &ray, PerRayData &pr
 
 OPTIX_RAYGEN_PROGRAM(rayGen)()
 {
+	vec3i ld = optixGetLaunchDimensions();
+	vec3i li = optixGetLaunchIndex();
+
+	vec3i center = vec3i(ld.x/2, ld.y/2, ld.z/2);
+	if(li == center)
+		printf("Coordinates: %d %d\n", li.x, li.y);
+
 	const RayGenData &self = owl::getProgramData<RayGenData>();
 	const vec2i pixelID = owl::getLaunchIndex();
 
