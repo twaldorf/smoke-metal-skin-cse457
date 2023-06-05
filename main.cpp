@@ -26,7 +26,7 @@ int main(int argc, char **argv)
 {
 	//image
 	const FLOAT aspect_ratio = 16.0/9.0;
-	const int image_width = 1280;
+	const int image_width = 1920;
 	screenInfo screen
 	{
 		//image_width

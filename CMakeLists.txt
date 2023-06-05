@@ -65,8 +65,7 @@ set(SOURCE
         src/ray.hpp src/png.hpp
         src/hitable.hpp src/sphere.hpp src/hitable_list.hpp
         src/camera.hpp src/material.cpp src/material.hpp src/util.cpp
-        src/gpu/gpu_render.cu src/gpu/gpu_render.cuh src/world_gen.cpp
-        src/world_gen.hpp src/constant_medium.cpp src/tri.cpp src/tri.hpp
+        src/world_gen.cpp src/world_gen.hpp src/constant_medium.cpp src/tri.cpp src/tri.hpp
         src/render.cpp src/render.hpp src/tri.cpp src/tri.hpp src/texture.cpp)
 set_source_files_properties(${SOURCE} PROPERTIES LANGUAGE CXX)
 
@@ -93,17 +92,17 @@ if(CUDA_COMPILE)
     target_compile_options(${EXE} PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:
             #--generate-line-info
             #-arch=sm_89
-            #-arch=sm_52
-            #-gencode=arch=compute_52,code=sm_52
-            #-gencode=arch=compute_60,code=sm_60
-            #-gencode=arch=compute_61,code=sm_61
-            #-gencode=arch=compute_70,code=sm_70
-            #-gencode=arch=compute_75,code=sm_75
-            #-gencode=arch=compute_80,code=sm_80
-            #-gencode=arch=compute_86,code=sm_86
-            #-gencode=arch=compute_87,code=sm_87
+            -arch=sm_52
+            -gencode=arch=compute_52,code=sm_52
+            -gencode=arch=compute_60,code=sm_60
+            -gencode=arch=compute_61,code=sm_61
+            -gencode=arch=compute_70,code=sm_70
+            -gencode=arch=compute_75,code=sm_75
+            -gencode=arch=compute_80,code=sm_80
+            -gencode=arch=compute_86,code=sm_86
+            -gencode=arch=compute_87,code=sm_87
             -gencode=arch=compute_89,code=sm_89
-            #-gencode=arch=compute_89,code=compute_89
+            -gencode=arch=compute_89,code=compute_89
             -m64
             #-Xptxas=-v
             -rdc=true
