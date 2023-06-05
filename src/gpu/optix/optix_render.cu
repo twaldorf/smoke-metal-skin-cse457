@@ -1,4 +1,5 @@
 #include <cfloat>
+#include <stdio.h>
 #include "optix_render.cuh"
 #include "optix_util.cuh"
 
@@ -23,8 +24,8 @@ __device__ void constantMediumSphereIntersectProg()
 	const vec3f dir = optixGetWorldRayDirection();
 	float hit1_t = optixGetRayTmax();
 	float hit2_t = optixGetRayTmax();
-	const float tmax = FLT_MAX;
-	const float tmin = FLT_MIN;
+	const float tmax = optixGetRayTmax();
+	const float tmin = optixGetRayTmin();
 
 	const vec3f oc = org - self.constantMediumSphere.sphere.center;
 
@@ -36,37 +37,42 @@ __device__ void constantMediumSphereIntersectProg()
 	//	if (!boundary->hit(r, FLT_MIN, FLT_MAX, rec1, rand_state))
 	//		return;
 	if (discriminant < 0.0f)
+	{
 		return;
+	}
 
-	float temp;
-	temp = (-b + sqrtf(discriminant)) / a;
-	if (temp < tmax && temp > tmin)
-		hit1_t = temp;
+	float root;
+	root = (-b + sqrtf(discriminant)) / a;
+	if (root < tmax && root > tmin)
+		hit1_t = root;
 	else
 	{
-		temp = (-b - sqrtf(discriminant)) / a;
-		if (temp < tmax && temp > tmin)
-			hit1_t = temp;
+		root = (-b - sqrtf(discriminant)) / a;
+		if (root < tmax && root > tmin)
+			hit1_t = root;
 		else
 		{
-			printf("WTF\n");
-			return;
+			//return;
 		}
 	}
 
 //	if (!boundary->hit(r, rec1.t+0.0001f, FLT_MAX, rec2, rand_state))
 //		return false;
 	float temp_tmin = hit1_t+0.0001f;
-	temp = (-b + sqrtf(discriminant)) / a;
-	if (temp < tmax && temp > temp_tmin)
-		hit2_t = temp;
+	root = (-b + sqrtf(discriminant)) / a;
+	if (root < tmax && root > temp_tmin)
+	{
+		hit2_t = root;
+	}
 	else
 	{
-		temp = (-b - sqrtf(discriminant)) / a;
-		if (temp < tmax && temp > temp_tmin)
-			hit2_t = temp;
+		root = (-b - sqrtf(discriminant)) / a;
+		if (root < tmax && root > temp_tmin)
+			hit2_t = root;
 		else
-			return;
+		{
+			//return;
+		}
 	}
 
 	if (hit1_t < tmin)
@@ -80,13 +86,13 @@ __device__ void constantMediumSphereIntersectProg()
 	if (hit1_t < 0)
 		hit1_t = 0;
 
-	const auto distance_inside_boundary = (hit2_t - hit1_t) * optixGetRayTmax();
-	const auto hit_distance = self.constantMediumSphere.neg_inv_density * log(prd.random());
+	const auto distance_inside_boundary = (hit2_t - hit1_t) * length(dir);
+	const auto hit_distance = self.constantMediumSphere.neg_inv_density * log(randomFloat(prd.random));
 
 	if (hit_distance > distance_inside_boundary)
 		return;
 
-	hit1_t = hit1_t + hit_distance / optixGetRayTmax();;
+	hit1_t = hit1_t + hit_distance / length(dir);
 
 	optixReportIntersection(hit1_t, 0);
 }

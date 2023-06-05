@@ -62,6 +62,11 @@ inline __device__ vec3f reflect(const vec3f &v, const vec3f &n)
 	return v - 2.0f*dot(v, n)*n;
 }
 
+inline __device__ float randomFloat(Random &random)
+{
+	return random();
+}
+
 inline __device__ vec3f randomPointOnUnitDisc(Random &random)
 {
 	vec3f p;
