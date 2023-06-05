@@ -180,7 +180,7 @@ OPTIX_RAYGEN_PROGRAM(rayGen)()
 		color += tracePath(self, ray, prd);
 	}
 
-	self.fbPtr[pixelIdx] = owl::make_rgba(color * (1.0f / self.samples));
+	self.fbPtr[pixelIdx] = owl::make_rgba(sqrt(color * (1.0f / self.samples)));
 }
 
 #endif //RTIOW1_SRC_GPU_OPTIX_OPTIX_RENDER_CUH_
