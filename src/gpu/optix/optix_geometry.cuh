@@ -76,6 +76,17 @@ struct MetalBoxesGeom {
 	vec3f *vertex;
 	vec3i *index;
 };
+
+struct MetalTriangleGeom {
+	/*! for our boxes geometry we use triangles for the geometry, so the
+	  materials will actually be shared among every group of 12
+	  triangles */
+	Metal *perTriangleMaterial;
+	/* the vertex and index arrays for the triangle mesh */
+	vec3f *vertex;
+	vec3i *index;
+};
+
 struct DielectricBoxesGeom {
 	/*! for our boxes geometry we use triangles for the geometry, so the
 	  materials will actually be shared among every group of 12

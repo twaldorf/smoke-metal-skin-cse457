@@ -28,6 +28,12 @@ struct meBoxes {
 	std::vector<Metal> materials;
 };
 
+struct meTriangle {
+	std::vector<vec3f> vertices;
+	std::vector<vec3i> indices;
+	std::vector<Metal> materials;
+};
+
 struct laBoxes {
 	std::vector<vec3f> vertices;
 	std::vector<vec3i> indices;
@@ -48,6 +54,7 @@ struct OptixWorld {
 	diBoxes dielectricBoxes;
 	meBoxes metalBoxes;
 	laBoxes lambertianBoxes;
+	meTriangle metalTriangle;
 	//isBoxes isotropicBoxes;
 };
 

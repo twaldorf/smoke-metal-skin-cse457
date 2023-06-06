@@ -50,6 +50,106 @@ void addRandomBox(BoxArray& boxes, const vec3f& center, const float size, const 
 	boxes.materials.push_back(material);
 }
 
+template<typename Triangle, typename Material>
+void addTriangle(Triangle& triangle, const Material& material)
+{
+	const int NUM_VERTICES = 3;
+	static const vec3f unitBoxVertices[NUM_VERTICES] =
+		{
+			{ -3.0f, 0.0f, 2.0f },
+			{ 3.0f, 2.0f, 0.0f },
+			{ 3.0f, 0.0f, -2.0f },
+		};
+
+	const int NUM_INDICES = 1;
+	static const vec3i unitBoxIndices[NUM_INDICES] =
+		{
+			{ 0, 2, 1 } //face front
+		};
+
+//	const vec3f U = normalize(randomPointInUnitSphere());
+//	owl::affine3f xfm = owl::frame(U);
+//	xfm = owl::affine3f(owl::linear3f::rotate(U, rnd())) * xfm;
+//	xfm = owl::affine3f(owl::linear3f::scale(.7f * size)) * xfm;
+//	xfm = owl::affine3f(owl::affine3f::translate(center)) * xfm;
+
+	const int startIndex = (int)triangle.vertices.size();
+	for(int i = 0; i < NUM_VERTICES; i++)
+		triangle.vertices.push_back(unitBoxVertices[i]);
+	for(int i = 0; i < NUM_INDICES; i++)
+		triangle.indices.push_back(unitBoxIndices[i] + vec3i(startIndex));
+	triangle.materials.push_back(material);
+}
+
+void createTriangleScene(OptixWorld* world)
+{
+	world->lambertianSpheres.push_back({ Sphere{ vec3f(0.0f, -1000.0f, -1.0f), 1000.0f },
+										 Lambertian{ vec3f(0.5f, 0.5f, 0.5f) }});
+
+	for (int a = -11; a < 11; a++)
+	{
+		for (int b = -11; b < 11; b++)
+		{
+			float choose_mat = rnd();
+			float choose_shape = rnd();
+			vec3f center(a + rnd(), 0.2f, b + rnd());
+			if (choose_mat < 0.7f)
+			{
+				if (choose_shape > .5f)
+				{
+					addRandomBox(world->lambertianBoxes, center, 0.2f,
+						Lambertian{ rnd3f() * rnd3f() });
+				}
+				else
+					world->lambertianSpheres.push_back({ Sphere{ center, 0.2f },
+														 Lambertian{ rnd3f() * rnd3f() }});
+			}
+			else if (choose_mat < 0.8f)
+			{
+				if (choose_shape > .5f)
+				{
+					addRandomBox(world->metalBoxes, center, .2f,
+						Metal{ 0.5f * (1.f + rnd3f()), 0.5f * rnd() });
+				}
+				else
+					world->metalSpheres.push_back({ Sphere{ center, 0.2f },
+													Metal{ 0.5f * (1.0f + rnd3f()), 0.5f * rnd() }});
+			}
+			else
+			{
+				if (choose_shape > .5f)
+				{
+					addRandomBox(world->dielectricBoxes, center, .2f,
+						Dielectric{ 1.5f });
+				}
+				//else
+				//world->isotropicSpheres.push_back({ {Sphere{ center, 0.2f }, rnd()*20.0f },
+				//									Isotropic{vec3f(1.0f, 1.0f, 1.0f)}});
+			}
+//			else
+//			{
+//				if (choose_shape > .5f)
+//				{
+//					addRandomBox(world->dielectricBoxes, center, .2f,
+//						Dielectric{ 1.5f });
+//				}
+//				else
+//					world->dielectricSpheres.push_back({ Sphere{ center, 0.2f },
+//														 Dielectric{ 1.5f }});
+//			}
+		}
+	}
+//	world->dielectricSpheres.push_back({ Sphere{ vec3f(-7.0f, 1.0f, 0.0f), 1.0f },
+//										 Dielectric{ 1.5f }});
+//	world->lambertianSpheres.push_back({ Sphere{ vec3f(-3.0f, 1.0f, 0.0f), 1.0f },
+//										 Lambertian{ vec3f(1.0f, 1.0f, 1.0f) }});
+//	world->metalSpheres.push_back({ Sphere{ vec3f(1.0f, 1.0f, 0.0f), 1.0f },
+//									Metal{ vec3f(0.7f, 0.6f, 0.5f), 0.0f }});
+//	world->isotropicSpheres.push_back({ {Sphere{ vec3f(5.0f, 1.0f, 0.0f), 1.0f}, 10.0f },
+//										Isotropic{ vec3f(1.0f, 1.0f, 1.0f) }});
+	addTriangle(world->metalTriangle, Metal({0.7, 0.6, 0.5}, 0.0));
+}
+
 void createScene(OptixWorld* world)
 {
 	world->lambertianSpheres.push_back({ Sphere{ vec3f(0.0f, -1000.0f, -1.0f), 1000.0f },
@@ -134,7 +234,10 @@ void optixRender(screenInfo screen)
 	float fovy = 20.0f;
 	camInfo optixCamera = { fbSize, lookFrom, lookAt, lookUp, fovy };
 
-	createScene(&objectList);
+	//createScene(&objectList);
+
+	createTriangleScene(&objectList);
+
 
 	// ##################################################################
 	// init owl
@@ -191,11 +294,11 @@ void optixRender(screenInfo screen)
 	};
 
 	// ----------- isotropic -----------
-	OWLGeomType isotropicSpheresGeomType = owlGeomTypeCreate(context, OWL_GEOMETRY_USER,
-		sizeof(IsotropicSpheresGeom), isotropicSpheresGeomVars, -1);
-	owlGeomTypeSetClosestHit(isotropicSpheresGeomType, 0, module, "IsotropicSpheres");
-	owlGeomTypeSetIntersectProg(isotropicSpheresGeomType, 0, module, "IsotropicSpheres");
-	owlGeomTypeSetBoundsProg(isotropicSpheresGeomType, module, "IsotropicSpheres");
+//	OWLGeomType isotropicSpheresGeomType = owlGeomTypeCreate(context, OWL_GEOMETRY_USER,
+//		sizeof(IsotropicSpheresGeom), isotropicSpheresGeomVars, -1);
+//	owlGeomTypeSetClosestHit(isotropicSpheresGeomType, 0, module, "IsotropicSpheres");
+//	owlGeomTypeSetIntersectProg(isotropicSpheresGeomType, 0, module, "IsotropicSpheres");
+//	owlGeomTypeSetBoundsProg(isotropicSpheresGeomType, module, "IsotropicSpheres");
 
 
 	// -------------------------------------------------------
@@ -212,6 +315,17 @@ void optixRender(screenInfo screen)
 	OWLGeomType metalBoxesGeomType = owlGeomTypeCreate(context, OWL_GEOMETRY_TRIANGLES,
 														sizeof(MetalBoxesGeom), metalBoxesGeomVars, -1);
 	owlGeomTypeSetClosestHit(metalBoxesGeomType, 0, module, "MetalBoxes");
+
+	//triangle
+	OWLVarDecl metalTriangleGeomVars[] = {
+		{ "perBoxMaterial", OWL_BUFPTR, OWL_OFFSETOF(MetalTriangleGeom, perTriangleMaterial) },
+		{ "vertex", OWL_BUFPTR, OWL_OFFSETOF(MetalTriangleGeom, vertex) },
+		{ "index", OWL_BUFPTR, OWL_OFFSETOF(MetalBoxesGeom, index) },
+		{ /* sentinel to mark end of list */ }
+	};
+	OWLGeomType metalTriangleGeomType = owlGeomTypeCreate(context, OWL_GEOMETRY_TRIANGLES,
+		sizeof(MetalBoxesGeom), metalTriangleGeomVars, -1);
+	owlGeomTypeSetClosestHit(metalTriangleGeomType, 0, module, "MetalTriangle");
 
 	// ----------- dielectric -----------
 	OWLVarDecl dielectricBoxesGeomVars[] = {
@@ -281,11 +395,11 @@ void optixRender(screenInfo screen)
 	owlGeomSetBuffer(dielectricSpheresGeom, "prims", dielectricSpheresBuffer);
 
 	// ----------- isotropic -----------
-	OWLBuffer isotropicSpheresBuffer = owlDeviceBufferCreate(context, OWL_USER_TYPE(objectList.isotropicSpheres[0]),
-														objectList.isotropicSpheres.size(), objectList.isotropicSpheres.data());
-	OWLGeom isotropicSpheresGeom = owlGeomCreate(context, isotropicSpheresGeomType);
-	owlGeomSetPrimCount(isotropicSpheresGeom, objectList.isotropicSpheres.size());
-	owlGeomSetBuffer(isotropicSpheresGeom, "prims", isotropicSpheresBuffer);
+//	OWLBuffer isotropicSpheresBuffer = owlDeviceBufferCreate(context, OWL_USER_TYPE(objectList.isotropicSpheres[0]),
+//														objectList.isotropicSpheres.size(), objectList.isotropicSpheres.data());
+//	OWLGeom isotropicSpheresGeom = owlGeomCreate(context, isotropicSpheresGeomType);
+//	owlGeomSetPrimCount(isotropicSpheresGeom, objectList.isotropicSpheres.size());
+//	owlGeomSetBuffer(isotropicSpheresGeom, "prims", isotropicSpheresBuffer);
 
 
 	// ====================== BOXES ======================
@@ -306,6 +420,23 @@ void optixRender(screenInfo screen)
 	owlGeomSetBuffer(metalBoxesGeom, "perBoxMaterial", metalMaterialsBuffer);
 	owlGeomSetBuffer(metalBoxesGeom, "vertex", metalVerticesBuffer);
 	owlGeomSetBuffer(metalBoxesGeom, "index", metalIndicesBuffer);
+
+	// ----------- metal -----------
+	OWLBuffer metalTriangleMaterialsBuffer = owlDeviceBufferCreate(context, OWL_USER_TYPE(objectList.metalTriangle.materials[0]),
+		objectList.metalTriangle.materials.size(),
+		objectList.metalTriangle.materials.data());
+	OWLBuffer metalTriangleVerticesBuffer = owlDeviceBufferCreate(context, OWL_FLOAT3, objectList.metalTriangle.vertices.size(),
+		objectList.metalTriangle.vertices.data());
+	OWLBuffer metalTriangleIndicesBuffer = owlDeviceBufferCreate(context, OWL_INT3, objectList.metalTriangle.indices.size(),
+		objectList.metalTriangle.indices.data());
+	OWLGeom metalTriangleGeom = owlGeomCreate(context, metalTriangleGeomType);
+	owlTrianglesSetVertices(metalTriangleGeom, metalTriangleVerticesBuffer, objectList.metalTriangle.vertices.size(),
+		sizeof(objectList.metalTriangle.vertices[0]), 0);
+	owlTrianglesSetIndices(metalTriangleGeom, metalTriangleIndicesBuffer, objectList.metalTriangle.indices.size(),
+		sizeof(objectList.metalTriangle.indices[0]), 0);
+	owlGeomSetBuffer(metalTriangleGeom, "perBoxMaterial", metalTriangleMaterialsBuffer);
+	owlGeomSetBuffer(metalTriangleGeom, "vertex", metalTriangleVerticesBuffer);
+	owlGeomSetBuffer(metalTriangleGeom, "index", metalTriangleIndicesBuffer);
 
 	// ----------- lambertian -----------
 	OWLBuffer lambertianMaterialsBuffer = owlDeviceBufferCreate(context, OWL_USER_TYPE(objectList.lambertianBoxes.materials[0]),
@@ -372,15 +503,16 @@ void optixRender(screenInfo screen)
 	// ----------- one group for the spheres -----------
 	/* (note these are user geoms, so have to be in another group than the triangle
 	   meshes) */
-	OWLGeom userGeoms[] = {lambertianSpheresGeom, metalSpheresGeom, dielectricSpheresGeom, isotropicSpheresGeom};
-	OWLGroup userGeomGroup = owlUserGeomGroupCreate(context, 4, userGeoms);
+	//OWLGeom userGeoms[] = {lambertianSpheresGeom, metalSpheresGeom, dielectricSpheresGeom, isotropicSpheresGeom};
+	OWLGeom userGeoms[] = {lambertianSpheresGeom, metalSpheresGeom, dielectricSpheresGeom};
+	OWLGroup userGeomGroup = owlUserGeomGroupCreate(context, 3, userGeoms);
 	owlGroupBuildAccel(userGeomGroup);
 
 	// ----------- one group for the boxes -----------
 	/* (note these are made of triangles, so have to be in another group
 	   than the sphere geoms) */
-	OWLGeom triangleGeoms[] = {lambertianBoxesGeom, metalBoxesGeom, dielectricBoxesGeom};
-	OWLGroup triangleGeomGroup = owlTrianglesGeomGroupCreate(context, 3, triangleGeoms);
+	OWLGeom triangleGeoms[] = {lambertianBoxesGeom, metalBoxesGeom, dielectricBoxesGeom, metalTriangleGeom};
+	OWLGroup triangleGeomGroup = owlTrianglesGeomGroupCreate(context, 4, triangleGeoms);
 	owlGroupBuildAccel(triangleGeomGroup);
 
 	// ----------- one final group with one instance each -----------

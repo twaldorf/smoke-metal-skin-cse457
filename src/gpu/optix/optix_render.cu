@@ -204,6 +204,33 @@ __device__ void closestHitBoxes()
 	prd.out.scatterEvent = scatter(material, hit_P,N, prd) ? rayGotBounced : rayGotCancelled;
 }
 
+template<typename TriangleGeomType>
+__device__ void closestHitTriangle()
+{
+	// printf("chbox\n");
+	// return;
+	const auto &self = owl::getProgramData<TriangleGeomType>();
+	PerRayData &prd = owl::getPRD<PerRayData>();
+
+	// ID of the triangle we've hit:
+	const int primID = optixGetPrimitiveIndex();
+
+	const auto &material = self.perTriangleMaterial[primID];
+
+	const vec3i index = self.index[primID];
+	const vec3f &A = self.vertex[index.x];
+	const vec3f &B = self.vertex[index.y];
+	const vec3f &C = self.vertex[index.z];
+	const vec3f N = normalize(cross(B-A,C-A));
+
+	const vec3f org = optixGetWorldRayOrigin();
+	const vec3f dir = optixGetWorldRayDirection();
+	const float hit_t = optixGetRayTmax();
+	const vec3f hit_P = org + hit_t * dir;
+
+	prd.out.scatterEvent = scatter(material, hit_P,N, prd) ? rayGotBounced : rayGotCancelled;
+}
+
 __device__ vec3f missColor(const Ray &ray)
 {
 	const vec2i pixelID = owl::getLaunchIndex();

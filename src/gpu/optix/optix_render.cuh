@@ -83,6 +83,9 @@ __device__ void closestHitConstantMediumSphere();
 template<typename BoxesGeomType>
 __device__ void closestHitBoxes();
 
+template<typename TriangleGeomType>
+__device__ void closestHitTriangle();
+
 // ==================================================================
 // actual closest-hit program instantiations for geom+material types
 // ==================================================================
@@ -113,6 +116,11 @@ OPTIX_CLOSEST_HIT_PROGRAM(MetalBoxes)()
 {
 	closestHitBoxes<MetalBoxesGeom>();
 }
+OPTIX_CLOSEST_HIT_PROGRAM(MetalTriangle)()
+{
+	closestHitTriangle<MetalTriangleGeom>();
+}
+
 
 OPTIX_CLOSEST_HIT_PROGRAM(LambertianBoxes)()
 {
