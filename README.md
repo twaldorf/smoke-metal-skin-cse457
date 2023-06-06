@@ -4,3 +4,5 @@ This project extends the RayTracingInOneWeekend Book 1 path tracer with CPU mult
 Requires Boost, libpng16, for CPU backend.
 
 Requires stb_image, g++12 (nvcc 12.x is not currently compatible with g++13), CUDA 12.x, and OptiX 7.x for the two GPU backends.
+
+Edit `set(OptiX_INSTALL_DIR /opt/optix)` in `CMakeLists.txt:37` to point to your OptiX install directory.
