@@ -31,7 +31,7 @@ __device__ bool gpu_constant_medium::hit(const gpu_ray& r, FLOAT t_min, FLOAT t_
 	rec.t = rec1.t + hit_distance / ray_length;
 	rec.p = r.at(rec.t);
 
-	rec.normal = gpu_vec3(1,0,0);  // arbitrary
+	rec.normal = gpu_vec3f(1,0,0);  // arbitrary
 	rec.front_face = true;     // also arbitrary
 	rec.mat_ptr = phase_function;
 

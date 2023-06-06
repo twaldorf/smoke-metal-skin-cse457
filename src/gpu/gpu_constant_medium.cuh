@@ -13,8 +13,6 @@ class gpu_constant_medium : public gpu_hitable {
 
 	__device__ bool hit(const gpu_ray& r, FLOAT t_min, FLOAT t_max, gpu_hit_record& rec, curandState* rand_state) const override;
 
-//    virtual bool bounding_box(double time0, double time1, aabb&& output_box) const override;
-
 	gpu_hitable* boundary;
 	gpu_material* phase_function;
 	FLOAT neg_inv_density;

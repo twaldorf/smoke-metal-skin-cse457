@@ -15,7 +15,7 @@ class gpu_ray;
 struct gpu_hit_record {
 	//point and normal of the intersection
 	gpu_point3 p;
-	gpu_vec3 normal;
+	gpu_vec3f normal;
 	//material info
 	gpu_material *mat_ptr;
 
@@ -24,7 +24,7 @@ struct gpu_hit_record {
 	//flag to check if we are entering or exiting an object
 	bool front_face;
 
-	__device__ inline void set_face_normal(const gpu_ray& r, const gpu_vec3& outward_normal)
+	__device__ inline void set_face_normal(const gpu_ray& r, const gpu_vec3f& outward_normal)
 	{
 		front_face = gpu_dot(r.direction(), outward_normal) < 0;
 		normal = front_face ? outward_normal : -outward_normal;

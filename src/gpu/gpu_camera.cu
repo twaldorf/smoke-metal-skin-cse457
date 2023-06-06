@@ -2,7 +2,7 @@
 
 __device__ gpu_camera::gpu_camera(gpu_point3 lookfrom,
 	gpu_point3 lookat,
-	gpu_vec3 vup,
+	gpu_vec3f vup,
 	FLOAT vfov,
 	FLOAT aspect_ratio,
 	FLOAT aperture,
@@ -26,7 +26,7 @@ __device__ gpu_camera::gpu_camera(gpu_point3 lookfrom,
 
 __device__ gpu_ray gpu_camera::get_ray(FLOAT s, FLOAT t, curandState *rand_state)
 {
-	gpu_vec3 rd = lens_radius*gpu_random_in_unit_disk(rand_state);
-	gpu_vec3 offset = u * rd.x() + v * rd.y();
+	gpu_vec3f rd = lens_radius*gpu_random_in_unit_disk(rand_state);
+	gpu_vec3f offset = u * rd.x() + v * rd.y();
 	return {origin+offset, lower_left_corner + s*horizontal + t*vertical - origin - offset};
 }
