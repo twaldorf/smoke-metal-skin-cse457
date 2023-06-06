@@ -66,7 +66,8 @@ set(SOURCE
         src/hitable.hpp src/sphere.hpp src/hitable_list.hpp
         src/camera.hpp src/material.cpp src/material.hpp src/util.cpp
         src/world_gen.cpp src/world_gen.hpp src/constant_medium.cpp src/tri.cpp src/tri.hpp
-        src/render.cpp src/render.hpp src/tri.cpp src/tri.hpp src/texture.cpp)
+        src/render.cpp src/render.hpp src/tri.cpp src/tri.hpp src/texture.cpp
+        src/texture.cpp src/cube.cpp src/xy_rect.cpp src/xz_rect.cpp src/yz_rect.cpp src/translate.cpp src/rotate.cpp)
 set_source_files_properties(${SOURCE} PROPERTIES LANGUAGE CXX)
 
 if(CUDA_COMPILE)
