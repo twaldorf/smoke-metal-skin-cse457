@@ -26,6 +26,7 @@ bool sphere::hit(const ray& r, FLOAT t_min, FLOAT t_max, hit_record& rec) const
 	rec.t = root;
 	rec.p = r.at(rec.t);
 	vec3 outward_normal = (rec.p - center) / radius;
+    get_sphere_uv(outward_normal, rec.u, rec.v);
 	rec.set_face_normal(r, outward_normal);
 	rec.mat_ptr = mat_ptr;
 
